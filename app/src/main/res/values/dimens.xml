@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    //Main
+    <dimen name="padding_layout">16dp</dimen>
+    <dimen name="medium_text_size">22sp</dimen>
+    <dimen name="button_radius">16dp</dimen>
+    <dimen name="icon_padding">8dp</dimen>
+    <dimen name="margin_start_16">16dp</dimen>
+
+
+    //Settings Activity
+    <dimen name="settings_activity_frame">61dp</dimen>
+    <dimen name="settings_activity_margin">12dp</dimen>
+    <dimen name="setting_text_size_activity">16sp</dimen>
+    <dimen name="title_size_26sp">26sp</dimen>
+</resources>
+
+
