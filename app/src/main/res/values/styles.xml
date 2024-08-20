@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MainButton">
+        <item name="backgroundTint">@color/YP_White</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:padding">@dimen/padding_layout</item>
+        <item name="android:textColor">@color/YP_Black</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:font">@font/ys_display_medium</item>
+        <item name="cornerRadius">@dimen/button_radius</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/icon_padding</item>
+        <item name="iconTint">@color/YP_Black</item>
+    </style>
+
+    <style name="SettingText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/margin_start_16</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">@dimen/setting_text_size_activity</item>
+        <item name="android:font">@font/ys_display_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="radius">
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+</resources>

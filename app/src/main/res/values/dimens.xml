@@ -13,6 +13,10 @@
     <dimen name="settings_activity_margin">12dp</dimen>
     <dimen name="setting_text_size_activity">16sp</dimen>
     <dimen name="title_size_26sp">26sp</dimen>
+    <dimen name="margin_16dp">16dp</dimen>
+    <dimen name="padding_14dp">14dp</dimen>
+    <dimen name="drawablePadding_10dp">10dp</dimen>
+    <dimen name="margin_24dp">24dp</dimen>
 </resources>
 
 
