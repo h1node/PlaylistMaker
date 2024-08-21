@@ -18,14 +18,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/arrow_back" />
+            android:src="@drawable/arrow_back"
+            app:tint="@color/colorLightNight" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/settings_activity_margin"
             android:text="@string/settings"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/title_size_26sp" />
 
     </LinearLayout>
@@ -37,12 +40,8 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_16"
-            android:layout_weight="1"
-            android:text="@string/dark_themes"
-            android:textSize="@dimen/setting_text_size_activity" />
+            style="@style/SettingText"
+            android:text="@string/dark_themes" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_button"
@@ -58,14 +57,11 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_16"
-            android:layout_weight="1"
-            android:text="@string/support"
-            android:textSize="@dimen/setting_text_size_activity" />
+            style="@style/SettingText"
+            android:text="@string/support" />
 
         <ImageView
+            android:id="@+id/supportButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/settings_activity_margin"
@@ -81,19 +77,15 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_16"
-            android:layout_weight="1"
-            android:text="@string/Share"
-            android:textSize="@dimen/setting_text_size_activity" />
+            style="@style/SettingText"
+            android:text="@string/Share" />
 
         <ImageView
+            android:id="@+id/shareButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/settings_activity_margin"
             android:src="@drawable/share" />
-
 
     </LinearLayout>
 
@@ -104,19 +96,15 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_16"
-            android:layout_weight="1"
-            android:text="@string/User_agreement"
-            android:textSize="@dimen/setting_text_size_activity" />
+            style="@style/SettingText"
+            android:text="@string/User_agreement" />
 
         <ImageView
+            android:id="@+id/userAgreementButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/settings_activity_margin"
             android:src="@drawable/arrow_forward" />
-
 
     </LinearLayout>
 
