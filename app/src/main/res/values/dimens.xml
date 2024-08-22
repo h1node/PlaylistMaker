@@ -6,6 +6,7 @@
     <dimen name="button_radius">16dp</dimen>
     <dimen name="icon_padding">8dp</dimen>
     <dimen name="margin_start_16">16dp</dimen>
+    <dimen name="margin_end_12">12dp</dimen>
 
 
     //Settings Activity

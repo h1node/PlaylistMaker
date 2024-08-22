@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -18,23 +19,23 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
-        val supportButton = findViewById<ImageView>(R.id.supportButton)
+        val supportButton = findViewById<TextView>(R.id.support)
         supportButton.setOnClickListener {
             val mailSubject = getString(R.string.mail_subject)
             val mailText = getString(R.string.mail_text)
 
             val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf("you@mail.com"))
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(R.string.you_mail))
                 putExtra(Intent.EXTRA_SUBJECT, mailSubject)
                 putExtra(Intent.EXTRA_TEXT, mailText)
             }
             startActivity(supportIntent)
         }
 
-        val shareButton = findViewById<ImageView>(R.id.shareButton)
+        val shareButton = findViewById<TextView>(R.id.share)
         shareButton.setOnClickListener {
-            val url = YP_URL
+            val url = getString(R.string.yp_url)
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, url)
@@ -42,12 +43,13 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        val userAgreementButton = findViewById<ImageView>(R.id.userAgreementButton)
+        val userAgreementButton = findViewById<TextView>(R.id.user_agreement)
         userAgreementButton.setOnClickListener {
-            val ypOfferUrl = YP_OFFER
+            val ypOfferUrl = getString(R.string.yp_offer)
             val agreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(ypOfferUrl))
             startActivity(agreementIntent)
         }
+
 
         val backButton = findViewById<ImageView>(R.id.back)
         backButton.setOnClickListener {
@@ -70,11 +72,5 @@ class SettingsActivity : AppCompatActivity() {
                 }
             )
         }
-    }
-
-
-    companion object {
-        const val YP_URL = "https://practicum.yandex.ru/profile/android-developer/"
-        const val YP_OFFER = "https://yandex.ru/legal/practicum_offer/"
     }
 }

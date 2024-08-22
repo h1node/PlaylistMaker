@@ -23,7 +23,7 @@
 
     </FrameLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/search_button"
         style="@style/MainButton"
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         android:text="@string/search"
         app:icon="@drawable/search" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/media_library_button"
         style="@style/MainButton"
         android:layout_width="match_parent"
@@ -39,7 +39,7 @@
         android:text="@string/media_library"
         app:icon="@drawable/media_library" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/setting_button"
         style="@style/MainButton"
         android:layout_width="match_parent"

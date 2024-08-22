@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="MainButton">
+    <style name="MainButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="backgroundTint">@color/YP_White</item>
         <item name="android:layout_weight">1</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
@@ -16,10 +16,11 @@
     </style>
 
     <style name="SettingText">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/margin_start_16</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginEnd">@dimen/margin_end_12</item>
         <item name="android:textSize">@dimen/setting_text_size_activity</item>
         <item name="android:font">@font/ys_display_regular</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
