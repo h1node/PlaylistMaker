@@ -4,10 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
@@ -22,10 +24,13 @@ class SearchActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
 
-        val backButton = findViewById<ImageView>(R.id.back)
-        backButton.setOnClickListener {
-            finish()
-        }
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setTitle(R.string.search)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+
 
         searchEditText = findViewById(R.id.searchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
@@ -35,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
             clearButton.visibility = View.GONE
             hideKeyboard()
         }
+
 
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -48,6 +54,11 @@ class SearchActivity : AppCompatActivity() {
 
         }
         searchEditText.addTextChangedListener(searchTextWatcher)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) finish()
+        return true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

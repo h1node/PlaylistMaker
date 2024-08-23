@@ -9,6 +9,7 @@
 <!--        <item name="colorSecondary"></item>-->
 <!--        <item name="colorSecondaryVariant"></item>-->
         <item name="colorOnSecondary">@color/YP_Black</item>
+        <item name="windowNoTitle">true</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>

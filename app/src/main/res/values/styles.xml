@@ -17,12 +17,12 @@
 
     <style name="SettingText">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">@dimen/settings_activity_frame</item>
         <item name="android:layout_marginStart">@dimen/margin_start_16</item>
-        <item name="android:layout_weight">1</item>
         <item name="android:layout_marginEnd">@dimen/margin_end_12</item>
         <item name="android:textSize">@dimen/setting_text_size_activity</item>
-        <item name="android:font">@font/ys_display_regular</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
