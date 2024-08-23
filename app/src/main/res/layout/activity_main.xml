@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ScreenBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main_background"
     android:orientation="vertical"
     android:padding="@dimen/padding_layout"
     tools:context=".MainActivity">
@@ -18,61 +18,33 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="@dimen/title_size_26sp" />
+            android:textColor="@color/YP_White"
+            android:textSize="26sp" />
 
     </FrameLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/search_button"
+        style="@style/MainButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
-        android:padding="@dimen/padding_layout"
         android:text="@string/search"
-        android:textColor="@color/black"
-        android:textSize="@dimen/medium_text_size"
-        app:cornerRadius="@dimen/button_radius"
-        app:icon="@drawable/search"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/search" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/media_library_button"
+        style="@style/MainButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
-        android:padding="@dimen/padding_layout"
         android:text="@string/media_library"
-        android:textColor="@color/black"
-        android:textSize="@dimen/medium_text_size"
-        app:cornerRadius="@dimen/button_radius"
-        app:icon="@drawable/media_library"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/media_library" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/setting_button"
+        style="@style/MainButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
-        android:padding="@dimen/padding_layout"
         android:text="@string/settings"
-        android:textColor="@color/black"
-        android:textSize="@dimen/medium_text_size"
-        app:cornerRadius="@dimen/button_radius"
-        app:icon="@drawable/settings"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding"
-        app:iconTint="@color/black" />
-
+        app:icon="@drawable/settings" />
 
 </LinearLayout>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -18,106 +17,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/arrow_back" />
+            android:src="@drawable/arrow_back"
+            app:tint="@color/colorLightNight" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/settings_activity_margin"
+            android:layout_weight="1"
             android:text="@string/settings"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/title_size_26sp" />
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_activity_frame"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_button"
+        style="@style/SettingText"
+        android:text="@string/dark_themes" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_16"
-            android:layout_weight="1"
-            android:text="@string/dark_themes"
-            android:textSize="@dimen/setting_text_size_activity" />
+    <TextView
+        android:id="@+id/support"
+        style="@style/SettingText"
+        android:text="@string/support"
+        app:drawableEndCompat="@drawable/support" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/settings_activity_margin" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/share"
+        style="@style/SettingText"
+        android:text="@string/Share"
+        app:drawableEndCompat="@drawable/share" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_activity_frame"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_16"
-            android:layout_weight="1"
-            android:text="@string/support"
-            android:textSize="@dimen/setting_text_size_activity" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/settings_activity_margin"
-            android:foreground="?attr/selectableItemBackground"
-            android:src="@drawable/support" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_activity_frame"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_16"
-            android:layout_weight="1"
-            android:text="@string/Share"
-            android:textSize="@dimen/setting_text_size_activity" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/settings_activity_margin"
-            android:src="@drawable/share" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_activity_frame"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_16"
-            android:layout_weight="1"
-            android:text="@string/User_agreement"
-            android:textSize="@dimen/setting_text_size_activity" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/settings_activity_margin"
-            android:src="@drawable/arrow_forward" />
-
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/user_agreement"
+        style="@style/SettingText"
+        android:text="@string/User_agreement"
+        app:drawableEndCompat="@drawable/arrow_forward" />
 
 </LinearLayout>
