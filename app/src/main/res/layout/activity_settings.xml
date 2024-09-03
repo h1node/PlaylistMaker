@@ -7,30 +7,11 @@
     android:padding="@dimen/padding_layout"
     tools:context=".SettingsActivity">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/setting_toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/arrow_back"
-            app:tint="@color/colorLightNight" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/settings_activity_margin"
-            android:layout_weight="1"
-            android:text="@string/settings"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/title_size_26sp" />
-
-    </LinearLayout>
+        app:title="@string/settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_button"

@@ -30,4 +30,10 @@
         <item name="cornerRadius">8dp</item>
     </style>
 
+    <style name="MusicItem">
+        <item name="android:textSize">@dimen/setting_text_size_activity</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
 </resources>
