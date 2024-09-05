@@ -10,7 +10,7 @@ import com.playlistmaker.view.rv_viewholder.MusicViewHolder
 
 class MusicRVAdapter(
     private val items: List<Track>,
-    private val clickListener: OnItemClickListener
+    private val clickListener: (Track) -> Unit
 ) :
     RecyclerView.Adapter<MusicViewHolder>() {
 
@@ -24,13 +24,10 @@ class MusicRVAdapter(
     override fun onBindViewHolder(holder: MusicViewHolder, position: Int) {
         holder.bind(items[position])
         holder.itemView.findViewById<View>(R.id.item_container).setOnClickListener {
-            clickListener.click(items[position])
+            clickListener(items[position])
         }
     }
 
     override fun getItemCount() = items.size
 }
 
-interface OnItemClickListener {
-    fun click(track: Track)
-}

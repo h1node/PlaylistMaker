@@ -8,11 +8,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:backgroundTint="@color/music_item_color"
-        android:elevation="1dp"
-        app:cardCornerRadius="@dimen/item_radius">
+        android:backgroundTint="@color/music_item_color">
 
         <LinearLayout
             android:id="@+id/item_container"
@@ -24,6 +20,9 @@
                 android:id="@+id/poster"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="13dp"
                 android:scaleType="centerCrop"
                 tools:src="@tools:sample/avatars" />
 
@@ -39,8 +38,8 @@
                     style="@style/MusicItem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="1dp"
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:focusableInTouchMode="true"

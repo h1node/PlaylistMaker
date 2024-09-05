@@ -25,10 +25,10 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        sendEmail()
-        switchThemes()
-        share()
-        userAgreement()
+        configureEmailButton()
+        configureThemeSwitch()
+        configureShareButton()
+        configureUserAgreement()
 
     }
 
@@ -37,7 +37,7 @@ class SettingsActivity : AppCompatActivity() {
         return true
     }
 
-    private fun sendEmail() {
+    private fun configureEmailButton() {
         val supportButton = findViewById<TextView>(R.id.support)
         supportButton.setOnClickListener {
             val mailSubject = getString(R.string.mail_subject)
@@ -53,7 +53,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun switchThemes() {
+    private fun configureThemeSwitch() {
         val switchButton = findViewById<SwitchCompat>(R.id.switch_button)
         switchButton.isChecked =
             when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
@@ -72,7 +72,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun share() {
+    private fun configureShareButton() {
         val shareButton = findViewById<TextView>(R.id.share)
         shareButton.setOnClickListener {
             val url = getString(R.string.yp_url)
@@ -84,7 +84,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun userAgreement() {
+    private fun configureUserAgreement() {
         val userAgreementButton = findViewById<TextView>(R.id.user_agreement)
         userAgreementButton.setOnClickListener {
             val ypOfferUrl = getString(R.string.yp_offer)

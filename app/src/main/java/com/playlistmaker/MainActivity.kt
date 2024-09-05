@@ -7,31 +7,31 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.playlistmaker.databinding.ActivityMainBinding
 import com.playlistmaker.view.rv_adapter.MusicRVAdapter
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val settingsButton = findViewById<Button>(R.id.setting_button)
-        val searchButton = findViewById<Button>(R.id.search_button)
-        val mediaLibraryButton = findViewById<Button>(R.id.media_library_button)
 
-        settingsButton.setOnClickListener {
+        binding.settingButton.setOnClickListener {
             val settingDisplay = Intent(this, SettingsActivity::class.java)
             startActivity(settingDisplay)
         }
 
-        mediaLibraryButton.setOnClickListener {
+        binding.mediaLibraryButton.setOnClickListener {
             val mediaLibraryDisplay = Intent(this, MediaLibrary::class.java)
             startActivity(mediaLibraryDisplay)
         }
 
-        searchButton.setOnClickListener {
+        binding.searchButton.setOnClickListener {
             val searchDisplay = Intent(this, SearchActivity::class.java)
             startActivity(searchDisplay)
         }

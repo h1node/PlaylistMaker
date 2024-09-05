@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    style="@style/ActivityTheme"
     android:padding="@dimen/padding_layout"
     tools:context=".SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/setting_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
         app:title="@string/settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial

@@ -9,13 +9,13 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.playlistmaker.view.rv_adapter.MusicRVAdapter
-import com.playlistmaker.view.rv_adapter.OnItemClickListener
 
 
 class SearchActivity : AppCompatActivity() {
@@ -63,14 +63,11 @@ class SearchActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.rv_search)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val onItemClickListener = object : OnItemClickListener {
-            override fun click(track: Track) {
-                TODO("Not yet implemented")
-            }
+        adapter = MusicRVAdapter(musicDataBase) { track ->
+            Toast.makeText(this, "Clicked on track: ${track.trackName}", Toast.LENGTH_SHORT).show()
         }
-
-        adapter = MusicRVAdapter(musicDataBase, onItemClickListener)
         recyclerView.adapter = adapter
+
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)

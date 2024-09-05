@@ -5,6 +5,8 @@
     <color name="main_background">#3772E7</color>
 
     <color name="search_background">#E6E8EB</color>
+    <color name="search_icon">#AEAFB4</color>
+
 
     <!--    icon_colors-->
     <color name="colorLightNight">#1A1B22</color>
