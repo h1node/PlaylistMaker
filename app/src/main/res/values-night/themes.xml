@@ -11,7 +11,6 @@
         <item name="colorOnSecondary">@color/YP_White</item>
         Status bar color.
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="ScreenBackground"><item name="android:background">@color/YP_Black</item></style>

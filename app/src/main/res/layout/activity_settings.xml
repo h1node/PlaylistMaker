@@ -6,6 +6,7 @@
     android:orientation="vertical"
     style="@style/ActivityTheme"
     android:padding="@dimen/padding_layout"
+    android:id="@+id/main"
     tools:context=".SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar

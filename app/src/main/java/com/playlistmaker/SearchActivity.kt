@@ -10,15 +10,17 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.view.rv_adapter.MusicRVAdapter
 
 
 class SearchActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySearchBinding
     private lateinit var adapter: MusicRVAdapter
     private lateinit var searchEditText: EditText
     private var inputText: String = ""
@@ -58,26 +60,33 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+            insets
+        }
 
-        val recyclerView = findViewById<RecyclerView>(R.id.rv_search)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
+        binding.rvSearch.layoutManager = LinearLayoutManager(this)
         adapter = MusicRVAdapter(musicDataBase) { track ->
             Toast.makeText(this, "Clicked on track: ${track.trackName}", Toast.LENGTH_SHORT).show()
         }
-        recyclerView.adapter = adapter
+        binding.rvSearch.adapter = adapter
 
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
 
         searchEditText = findViewById(R.id.searchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
-
         clearButton.setOnClickListener {
             searchEditText.setText("")
             clearButton.visibility = View.GONE

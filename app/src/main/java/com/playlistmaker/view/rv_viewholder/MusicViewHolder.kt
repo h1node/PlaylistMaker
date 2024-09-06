@@ -20,10 +20,11 @@ class MusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         musicTitle.text = track.trackName
         artistName.text = track.artistName
         time.text = track.trackTime
-        Glide.with(itemView).load(track.artworkUrl100)
+        Glide.with(itemView)
+            .load(track.artworkUrl100)
             .centerCrop()
-            .placeholder(R.drawable.image)
-            .transform(RoundedCorners(dpToPx(2f, itemView.context)))
+            .placeholder(R.drawable.placeholder)
+            .transform(RoundedCorners(dpToPx(10f, itemView.context)))
             .into(poster)
     }
 
@@ -31,5 +32,6 @@ class MusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics
         ).toInt()
+
     }
 }
