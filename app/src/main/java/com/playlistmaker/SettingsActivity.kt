@@ -5,20 +5,54 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageView
+import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.playlistmaker.databinding.ActivitySettingsBinding
 
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+            insets
+        }
 
+        val toolbar = findViewById<Toolbar>(R.id.setting_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+
+        configureEmailButton()
+        configureThemeSwitch()
+        configureShareButton()
+        configureUserAgreement()
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) finish()
+        return true
+    }
+
+    private fun configureEmailButton() {
         val supportButton = findViewById<TextView>(R.id.support)
         supportButton.setOnClickListener {
             val mailSubject = getString(R.string.mail_subject)
@@ -32,30 +66,9 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(supportIntent)
         }
+    }
 
-        val shareButton = findViewById<TextView>(R.id.share)
-        shareButton.setOnClickListener {
-            val url = getString(R.string.yp_url)
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, url)
-            }
-            startActivity(shareIntent)
-        }
-
-        val userAgreementButton = findViewById<TextView>(R.id.user_agreement)
-        userAgreementButton.setOnClickListener {
-            val ypOfferUrl = getString(R.string.yp_offer)
-            val agreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(ypOfferUrl))
-            startActivity(agreementIntent)
-        }
-
-
-        val backButton = findViewById<ImageView>(R.id.back)
-        backButton.setOnClickListener {
-            finish()
-        }
-
+    private fun configureThemeSwitch() {
         val switchButton = findViewById<SwitchCompat>(R.id.switch_button)
         switchButton.isChecked =
             when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
@@ -71,6 +84,27 @@ class SettingsActivity : AppCompatActivity() {
                     AppCompatDelegate.MODE_NIGHT_NO
                 }
             )
+        }
+    }
+
+    private fun configureShareButton() {
+        val shareButton = findViewById<TextView>(R.id.share)
+        shareButton.setOnClickListener {
+            val url = getString(R.string.yp_url)
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, url)
+            }
+            startActivity(shareIntent)
+        }
+    }
+
+    private fun configureUserAgreement() {
+        val userAgreementButton = findViewById<TextView>(R.id.user_agreement)
+        userAgreementButton.setOnClickListener {
+            val ypOfferUrl = getString(R.string.yp_offer)
+            val agreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(ypOfferUrl))
+            startActivity(agreementIntent)
         }
     }
 }
