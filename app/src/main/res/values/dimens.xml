@@ -22,6 +22,9 @@
     <dimen name="item_text_15sp">15sp</dimen>
 
     <dimen name="item_radius">10dp</dimen>
+    <dimen name="padding_8dp">8dp</dimen>
+    <dimen name="marginHorizontal_24dp">24dp</dimen>
+    <dimen name="textSizePlaceHolder_25sp">25sp</dimen>
 </resources>
 
 
