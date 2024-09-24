@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.playlistmaker.data.ApiClient
 import com.playlistmaker.data.MusicApi
 import com.playlistmaker.data.itunesdb.ResultResponse
 import com.playlistmaker.databinding.ActivitySearchBinding
@@ -21,8 +22,7 @@ import com.playlistmaker.view.rv_adapter.MusicRVAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -30,13 +30,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var adapter: MusicRVAdapter
     private var inputText: String = ""
     private var failedQuery: String? = null
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://itunes.apple.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val musicApi = retrofit.create(MusicApi::class.java)
+    private val apiClient = ApiClient()
+    private val musicApi = apiClient.getClient().create(MusicApi::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +76,7 @@ class SearchActivity : AppCompatActivity() {
             binding.searchEditText.setText("")
             it.visibility = View.GONE
             hideKeyboard()
+            clearResults()
         }
 
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
@@ -104,6 +100,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun searchMusic(query: String) {
         failedQuery = query
+        hidePlaceholderMessage()
         val call = musicApi.getMusic(query)
         call.enqueue(object : Callback<ResultResponse> {
             override fun onResponse(
@@ -131,10 +128,17 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ResultResponse>, t: Throwable) {
-                showPlaceholderMessage(
-                    getString(R.string.connection_problem),
-                    R.drawable.internet_error
-                )
+                if (adapter.items.isEmpty()) {
+                    showPlaceholderMessage(
+                        getString(R.string.connection_problem),
+                        R.drawable.internet_error
+                    )
+                } else {
+                    showPlaceholderMessage(
+                        getString(R.string.connection_problem),
+                        R.drawable.internet_error
+                    )
+                }
             }
         })
     }
@@ -166,6 +170,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showPlaceholderMessage(text: String, imageRes: Int) {
+        clearResults()
         binding.placeholderMessage.text = text
         binding.placeholderMessage.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
         binding.placeholderImageInternet.visibility =
@@ -177,6 +182,11 @@ class SearchActivity : AppCompatActivity() {
         if (text.isNotEmpty()) {
             Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun clearResults() {
+        adapter.items = emptyList()
+        adapter.notifyDataSetChanged()
     }
 
     private fun hidePlaceholderMessage() {

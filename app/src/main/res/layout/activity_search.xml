@@ -38,7 +38,8 @@
             android:padding="@dimen/padding_8dp"
             android:singleLine="true"
             android:textColor="@color/YP_Black"
-            android:textColorHint="@color/YP_Black" />
+            android:textColorHint="@color/YP_Black"
+            android:textCursorDrawable="@drawable/search_cursor_color" />
 
         <ImageView
             android:id="@+id/clearIcon"
