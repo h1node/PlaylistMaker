@@ -30,8 +30,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var adapter: MusicRVAdapter
     private var inputText: String = ""
     private var failedQuery: String? = null
-    private val apiClient = ApiClient()
-    private val musicApi = apiClient.getClient().create(MusicApi::class.java)
+    private val musicApi = ApiClient().getClient().create(MusicApi::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,85 +43,98 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
+        setupRecyclerView()
+        setupToolbar()
+        setupSearchEditText()
+        setupClearIcon()
+        setupPlaceholderButton()
+    }
+
+
+    private fun setupRecyclerView() {
         adapter = MusicRVAdapter { track ->
-            Toast.makeText(
-                this@SearchActivity,
-                "Clicked on track: ${track.trackName}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Clicked on track: ${track.trackName}", Toast.LENGTH_SHORT).show()
         }
         binding.rvSearch.layoutManager = LinearLayoutManager(this)
         binding.rvSearch.adapter = adapter
+    }
 
+    private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+        }
+    }
 
+    private fun setupSearchEditText() {
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val query = binding.searchEditText.text.toString()
-                if (query.isNotEmpty()) {
-                    searchMusic(query)
-                } else {
-                    Toast.makeText(this, "Введите запрос", Toast.LENGTH_SHORT).show()
-                }
+                if (query.isNotEmpty()) searchMusic(query)
+                else Toast.makeText(this, "Введите запрос", Toast.LENGTH_SHORT).show()
                 true
-            } else {
-                false
-            }
-        }
-
-        binding.clearIcon.setOnClickListener {
-            binding.searchEditText.setText("")
-            it.visibility = View.GONE
-            hideKeyboard()
-            clearResults()
+            } else false
         }
 
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearIcon.visibility = clearButtonVisibility(s)
+                binding.clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 inputText = s?.toString() ?: ""
+                if (s.isNullOrEmpty()) clearResults()
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
 
+    private fun setupClearIcon() {
+        binding.clearIcon.setOnClickListener {
+            binding.searchEditText.setText("")
+            it.visibility = View.GONE
+            hideKeyboard()
+            clearResults()
+        }
+    }
+
+    private fun setupPlaceholderButton() {
         binding.placeholderButton.setOnClickListener {
             val query = failedQuery
             if (query != null) searchMusic(query)
         }
-
         binding.placeholderButton.visibility = View.GONE
     }
 
     private fun searchMusic(query: String) {
         failedQuery = query
         hidePlaceholderMessage()
-        val call = musicApi.getMusic(query)
-        call.enqueue(object : Callback<ResultResponse> {
+        musicApi.getMusic(query).enqueue(object : Callback<ResultResponse> {
             override fun onResponse(
                 call: Call<ResultResponse>,
                 response: Response<ResultResponse>
             ) {
                 if (response.isSuccessful) {
-                    val resultResponse = response.body()
-                    if (resultResponse != null && resultResponse.results.isNotEmpty()) {
-                        adapter.items = resultResponse.results
-                        adapter.notifyDataSetChanged()
-                        hidePlaceholderMessage()
-                    } else {
-                        showPlaceholderMessage(
+                    response.body()?.let { resultResponse ->
+                        if (resultResponse.results.isNotEmpty()) {
+                            adapter.items = resultResponse.results
+                            adapter.notifyDataSetChanged()
+                        } else showPlaceholderMessage(
                             getString(R.string.nothing_was_found),
-                            R.drawable.music_error
+                            R.drawable.music_error,
+                            false
                         )
-                    }
+                    } ?: showPlaceholderMessage(
+                        getString(R.string.nothing_was_found),
+                        R.drawable.music_error,
+                        false
+                    )
                 } else {
                     showPlaceholderMessage(
                         getString(R.string.nothing_was_found),
-                        R.drawable.music_error
+                        R.drawable.music_error,
+                        false
                     )
                 }
             }
@@ -131,12 +143,8 @@ class SearchActivity : AppCompatActivity() {
                 if (adapter.items.isEmpty()) {
                     showPlaceholderMessage(
                         getString(R.string.connection_problem),
-                        R.drawable.internet_error
-                    )
-                } else {
-                    showPlaceholderMessage(
-                        getString(R.string.connection_problem),
-                        R.drawable.internet_error
+                        R.drawable.internet_error,
+                        false
                     )
                 }
             }
@@ -144,8 +152,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) finish()
-        return true
+        return if (item.itemId == android.R.id.home) {
+            finish()
+            true
+        } else super.onOptionsItemSelected(item)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -159,26 +169,24 @@ class SearchActivity : AppCompatActivity() {
         binding.searchEditText.setText(inputText)
     }
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-    }
-
     private fun hideKeyboard() {
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 
-    private fun showPlaceholderMessage(text: String, imageRes: Int) {
+    private fun showPlaceholderMessage(text: String, imageRes: Int, refreshButton: Boolean) {
         clearResults()
         binding.placeholderMessage.text = text
         binding.placeholderMessage.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
-        binding.placeholderImageInternet.visibility =
-            if (imageRes == R.drawable.internet_error) View.VISIBLE else View.GONE
-        binding.placeholderImageMusic.visibility =
-            if (imageRes != R.drawable.internet_error) View.VISIBLE else View.GONE
-        binding.placeholderButton.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
 
+        binding.placeholderImageInternet.visibility = if (imageRes == R.drawable.internet_error) View.VISIBLE else View.GONE
+        binding.placeholderImageMusic.visibility = if (imageRes != R.drawable.internet_error) View.VISIBLE else View.GONE
+
+        binding.placeholderButton.visibility = if (refreshButton) View.VISIBLE else View.GONE
+        if (imageRes == R.drawable.internet_error) {
+            binding.placeholderButton.visibility = View.VISIBLE
+        }
         if (text.isNotEmpty()) {
             Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
         }
