@@ -10,4 +10,7 @@
     <string name="support">Support</string>
     <string name="mail_subject">Message to the developers of the Playlist Maker app</string>
     <string name="mail_text">Thanks to the developers for the cool app!</string>
+    <string name="nothing_was_found">Nothing was found</string>
+    <string name="Refresh">Refresh</string>
+    <string name="connection_problem">Communication problems\n\n The download failed. Check your internet connection</string>
 </resources>

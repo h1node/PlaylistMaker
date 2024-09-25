@@ -5,15 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.playlistmaker.R
-import com.playlistmaker.Track
+import com.playlistmaker.data.itunesdb.Music
 import com.playlistmaker.view.rv_viewholder.MusicViewHolder
 
 class MusicRVAdapter(
-    private val items: List<Track>,
-    private val clickListener: (Track) -> Unit
+    private val clickListener: (Music) -> Unit
 ) :
     RecyclerView.Adapter<MusicViewHolder>() {
-
+    var items: List<Music> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicViewHolder {
         return MusicViewHolder(

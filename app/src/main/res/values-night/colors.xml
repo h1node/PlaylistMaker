@@ -6,4 +6,7 @@
 
     <color name="music_item_color">#1A1B22</color>
 
+    <!--    text color-->
+    <color name="refresh_button_text_color">#1A1B22</color>
+
 </resources>
