@@ -12,7 +12,13 @@ class MusicRVAdapter(
     private val clickListener: (Music) -> Unit
 ) :
     RecyclerView.Adapter<MusicViewHolder>() {
-    var items: List<Music> = listOf()
+
+    var items: List<Music> = emptyList()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicViewHolder {
         return MusicViewHolder(
