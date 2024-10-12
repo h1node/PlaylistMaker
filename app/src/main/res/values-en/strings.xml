@@ -13,4 +13,7 @@
     <string name="nothing_was_found">Nothing was found</string>
     <string name="Refresh">Refresh</string>
     <string name="connection_problem">Communication problems\n\n The download failed. Check your internet connection</string>
+    <string name="You_were_looking_for">You were looking for</string>
+    <string name="Clear_the_history">Clear the history</string>
+    <string name="search_hint">Enter the name of the movie. You can specify the year for a more accurate search</string>
 </resources>

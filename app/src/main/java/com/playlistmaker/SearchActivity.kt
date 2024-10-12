@@ -1,9 +1,11 @@
 package com.playlistmaker
 
 import android.content.Context
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -14,8 +16,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.playlistmaker.data.ApiClient
 import com.playlistmaker.data.MusicApi
+import com.playlistmaker.data.itunesdb.Music
 import com.playlistmaker.data.itunesdb.ResultResponse
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.view.rv_adapter.MusicRVAdapter
@@ -27,7 +31,9 @@ import retrofit2.Response
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var adapter: MusicRVAdapter
+    private lateinit var searchAdapter: MusicRVAdapter
+    private lateinit var historyAdapter: MusicRVAdapter
+    private lateinit var listener: OnSharedPreferenceChangeListener
     private var inputText: String = ""
     private var failedQuery: String? = null
     private val musicApi = ApiClient().getClient().create(MusicApi::class.java)
@@ -48,15 +54,52 @@ class SearchActivity : AppCompatActivity() {
         setupSearchEditText()
         setupClearIcon()
         setupPlaceholderButton()
+        setupClearHistoryButton()
+
+        if (binding.searchEditText.text.isNullOrEmpty()) {
+            binding.hintTextView.visibility = View.VISIBLE
+        } else {
+            binding.hintTextView.visibility = View.GONE
+        }
+
+        val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+        listener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == SEARCH_HISTORY) {
+                getSearchHistory()
+            }
+        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        getSearchHistory()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        getSharedPreferences(SHARED_PREFS, MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(
+            listener
+        )
+    }
+
+    private fun createJsonFromTrackList(trackList: List<Music>): String {
+        return Gson().toJson(trackList)
+    }
+
+    private fun createTrackListFromJson(json: String): List<Music> {
+        return Gson().fromJson(json, Array<Music>::class.java).toList()
+    }
 
     private fun setupRecyclerView() {
-        adapter = MusicRVAdapter { track ->
+        searchAdapter = MusicRVAdapter { track ->
+            addTrackToHistory(track)
             Toast.makeText(this, "Clicked on track: ${track.trackName}", Toast.LENGTH_SHORT).show()
         }
         binding.rvSearch.layoutManager = LinearLayoutManager(this)
-        binding.rvSearch.adapter = adapter
+        binding.rvSearch.adapter = searchAdapter
+
+        historyAdapter = MusicRVAdapter { track ->
+            addTrackToHistory(track)
+        }
+        binding.rvHistory.layoutManager = LinearLayoutManager(this)
+        binding.rvHistory.adapter = historyAdapter
     }
 
     private fun setupToolbar() {
@@ -72,7 +115,7 @@ class SearchActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val query = binding.searchEditText.text.toString()
                 if (query.isNotEmpty()) searchMusic(query)
-                else Toast.makeText(this, "Введите запрос", Toast.LENGTH_SHORT).show()
+                else Toast.makeText(this, "Enter a request", Toast.LENGTH_SHORT).show()
                 true
             } else false
         }
@@ -83,6 +126,13 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 inputText = s?.toString() ?: ""
+
+                if (binding.searchEditText.hasFocus() && s.isNullOrEmpty()) {
+                    binding.hintTextView.visibility = View.VISIBLE
+                } else {
+                    binding.hintTextView.visibility = View.GONE
+                }
+
                 if (s.isNullOrEmpty()) clearResults()
             }
 
@@ -107,6 +157,12 @@ class SearchActivity : AppCompatActivity() {
         binding.placeholderButton.visibility = View.GONE
     }
 
+    private fun setupClearHistoryButton() {
+        binding.clearAdapter.setOnClickListener {
+            clearSearchHistory()
+        }
+    }
+
     private fun searchMusic(query: String) {
         failedQuery = query
         hidePlaceholderMessage()
@@ -118,13 +174,15 @@ class SearchActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let { resultResponse ->
                         if (resultResponse.results.isNotEmpty()) {
-                            adapter.items = resultResponse.results
-                            adapter.notifyDataSetChanged()
-                        } else showPlaceholderMessage(
-                            getString(R.string.nothing_was_found),
-                            R.drawable.music_error,
-                            false
-                        )
+                            searchAdapter.items = resultResponse.results
+                            searchAdapter.notifyDataSetChanged()
+                        } else {
+                            showPlaceholderMessage(
+                                getString(R.string.nothing_was_found),
+                                R.drawable.music_error,
+                                false
+                            )
+                        }
                     } ?: showPlaceholderMessage(
                         getString(R.string.nothing_was_found),
                         R.drawable.music_error,
@@ -140,15 +198,65 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ResultResponse>, t: Throwable) {
-                if (adapter.items.isEmpty()) {
+                if (searchAdapter.items.isEmpty()) {
                     showPlaceholderMessage(
                         getString(R.string.connection_problem),
                         R.drawable.internet_error,
                         false
                     )
                 }
+                Log.e("SearchActivity", "Error!!", t)
             }
         })
+    }
+
+    private fun addTrackToHistory(track: Music) {
+        val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+        val trackListJson = sharedPreferences.getString(SEARCH_HISTORY, null)
+        val trackList = if (trackListJson != null) {
+            createTrackListFromJson(trackListJson).toMutableList()
+        } else {
+            mutableListOf()
+        }
+        trackList.removeAll { it.trackName == track.trackName && it.artistName == track.artistName }
+        trackList.add(0, track)
+        if (trackList.size > 10) {
+            trackList.removeAt(10)
+        }
+
+        val newTrackListJson = createJsonFromTrackList(trackList)
+        sharedPreferences.edit().putString(SEARCH_HISTORY, newTrackListJson).apply()
+        historyAdapter.items = trackList
+        historyAdapter.notifyDataSetChanged()
+
+        binding.searched.visibility = View.VISIBLE
+        binding.clearAdapter.visibility = View.VISIBLE
+    }
+
+    private fun getSearchHistory() {
+        val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+        val trackListJson = sharedPreferences.getString(SEARCH_HISTORY, null)
+        if (trackListJson != null) {
+            val trackList = createTrackListFromJson(trackListJson)
+            historyAdapter.items = trackList
+            historyAdapter.notifyDataSetChanged()
+
+            binding.searched.visibility = View.VISIBLE
+            binding.clearAdapter.visibility = View.VISIBLE
+        } else {
+            binding.searched.visibility = View.GONE
+            binding.clearAdapter.visibility = View.GONE
+        }
+    }
+
+    private fun clearSearchHistory() {
+        val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+        sharedPreferences.edit().remove(SEARCH_HISTORY).apply()
+        historyAdapter.items = emptyList()
+        historyAdapter.notifyDataSetChanged()
+
+        binding.searched.visibility = View.GONE
+        binding.clearAdapter.visibility = View.GONE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -175,26 +283,27 @@ class SearchActivity : AppCompatActivity() {
         inputMethodManager.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 
-    private fun showPlaceholderMessage(text: String, imageRes: Int, refreshButton: Boolean) {
-        clearResults()
-        binding.placeholderMessage.text = text
-        binding.placeholderMessage.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
+    private fun showPlaceholderMessage(text: String, imageRes: Int, refreshButton: Boolean) =
+        with(binding) {
+            clearResults()
+            placeholderMessage.text = text
+            placeholderMessage.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
 
-        binding.placeholderImageInternet.visibility = if (imageRes == R.drawable.internet_error) View.VISIBLE else View.GONE
-        binding.placeholderImageMusic.visibility = if (imageRes != R.drawable.internet_error) View.VISIBLE else View.GONE
+            placeholderImageInternet.visibility = if (imageRes == R.drawable.internet_error) View.VISIBLE else View.GONE
+            placeholderImageMusic.visibility = if (imageRes != R.drawable.internet_error) View.VISIBLE else View.GONE
 
-        binding.placeholderButton.visibility = if (refreshButton) View.VISIBLE else View.GONE
-        if (imageRes == R.drawable.internet_error) {
-            binding.placeholderButton.visibility = View.VISIBLE
+            placeholderButton.visibility = if (refreshButton) View.VISIBLE else View.GONE
+            if (imageRes == R.drawable.internet_error) {
+                placeholderButton.visibility = View.VISIBLE
+            }
+            if (text.isNotEmpty()) {
+                Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
+            }
         }
-        if (text.isNotEmpty()) {
-            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
-        }
-    }
 
     private fun clearResults() {
-        adapter.items = emptyList()
-        adapter.notifyDataSetChanged()
+        searchAdapter.items = emptyList()
+        searchAdapter.notifyDataSetChanged()
     }
 
     private fun hidePlaceholderMessage() {
@@ -206,5 +315,8 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val EDIT_TEXT_KEY = "SOMETHING_TEXT"
+        const val SHARED_PREFS = "shared_prefs"
+        const val SEARCH_HISTORY = "search_history"
     }
 }
+
