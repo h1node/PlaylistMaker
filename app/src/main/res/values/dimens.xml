@@ -22,12 +22,6 @@
     <dimen name="item_text_15sp">15sp</dimen>
 
     <dimen name="item_radius">10dp</dimen>
-    <dimen name="padding_8dp">8dp</dimen>
-    <dimen name="marginHorizontal_24dp">24dp</dimen>
-    <dimen name="textSizePlaceHolder_25sp">25sp</dimen>
-    <dimen name="music_item_13sp">13sp</dimen>
-    <dimen name="music_item_16sp">16sp</dimen>
-    <dimen name="YS_medium_19sp">19sp</dimen>
 </resources>
 
 

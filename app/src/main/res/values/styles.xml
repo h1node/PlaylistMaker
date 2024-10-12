@@ -28,18 +28,6 @@
     <style name="radius">
         <item name="cornerRadius">8dp</item>
     </style>
-    
-    <style name="refresh_button">
-        <item name="cornerRadius">54dp</item>
-        <item name="backgroundTint">@color/colorLightNight</item>
-        <item name="fontFamily">@font/ys_display_medium</item>
-    </style>
-
-    <style name="clear_button">
-        <item name="cornerRadius">54dp</item>
-        <item name="backgroundTint">@color/colorLightNight</item>
-        <item name="fontFamily">@font/ys_display_medium</item>
-    </style>
 
     <style name="MusicItem">
         <item name="android:textSize">@dimen/setting_text_size_activity</item>

@@ -18,8 +18,8 @@
 
             <ImageView
                 android:id="@+id/poster"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
@@ -39,6 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
+                    android:layout_marginBottom="1dp"
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
@@ -47,7 +48,7 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textAlignment="textStart"
-                    android:textSize="@dimen/music_item_16sp"
+                    android:textSize="@dimen/item_title_21sp"
                     tools:text="Song Title" />
 
                 <LinearLayout
@@ -60,13 +61,8 @@
                         style="@style/MusicItem"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
                         android:lines="1"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:scrollHorizontally="true"
-                        android:textSize="@dimen/music_item_13sp"
+                        android:textSize="@dimen/item_text_15sp"
                         tools:text="@tools:sample/full_names" />
 
                     <ImageView
@@ -80,7 +76,7 @@
                         style="@style/MusicItem"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/music_item_13sp"
+                        android:textSize="@dimen/item_text_15sp"
                         tools:text="@tools:sample/date/mmddyy" />
 
                 </LinearLayout>
