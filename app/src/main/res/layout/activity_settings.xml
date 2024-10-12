@@ -1,12 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    style="@style/ActivityTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    style="@style/ActivityTheme"
     android:padding="@dimen/padding_layout"
-    android:id="@+id/main"
     tools:context=".SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -19,7 +19,9 @@
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_button"
         style="@style/SettingText"
-        android:text="@string/dark_themes" />
+        android:text="@string/dark_themes"
+        app:thumbTint="@color/YP_Blue"
+        app:trackTint="@color/switch_track_color" />
 
     <TextView
         android:id="@+id/support"
