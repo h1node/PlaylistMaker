@@ -1,0 +1,163 @@
+[33mcommit ee9668659fec8e1aa500b72f322b4ebf831a27dd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev[m[33m)[m
+Merge: b4f6349 6dabcab
+Author: Iskarel <h1node@yandex.ru>
+Date:   Sat Oct 12 16:32:30 2024 +0300
+
+    Sprint 12
+     - new class App
+     - sharedPreferences
+
+[33mcommit b4f63495da0953268703980af6899a74c24c4290[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Sat Oct 12 15:56:39 2024 +0300
+
+    Sprint 12
+     - new class App
+     - sharedPreferences
+
+[33mcommit 6dabcab17145b57d37929694651cd1d3718c36ee[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Sat Oct 12 15:56:39 2024 +0300
+
+    Sprint 12
+     - new class App
+     - sharedPreferences
+
+[33mcommit 3d81ae7baaaf8d34b5321247d58d30bea222ada6[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Wed Sep 25 23:45:30 2024 +0300
+
+    Sprint 11
+     - SearchActivity(2.0)
+
+[33mcommit a93e45a2b2d222f2a3713b662038dd2a9e56a890[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Tue Sep 24 23:51:27 2024 +0300
+
+     -Исправлен UI
+    (music_item,activity_setting)
+     -Поправил баги в SearchActivity
+
+[33mcommit 1118bca8c14b66f100f600114a74aab564c621b0[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Fri Sep 20 01:59:55 2024 +0300
+
+    Retrofit
+    formatTrackTime
+    showPlaceholderMessage
+
+[33mcommit 5c8620a4f51eeb47854fccc4f107f164dd23f448[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Sat Sep 7 01:08:41 2024 +0300
+
+    try to make correct layouts again
+    - инсеты расставил, картинку поменял
+    - закругление углов плейсхолдера увеличил
+     .transform(RoundedCorners(dpToPx(10f, itemView.context))) если это не коректно, то можно отдельный стиль поставить
+
+[33mcommit aa7746c66e03f7db35f9dc54b169af3eaa1bc4bb[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Thu Sep 5 23:39:54 2024 +0300
+
+    RV Glide ViewBinding
+    try to make correct layouts
+
+[33mcommit f12ffbe3e4eadc11448c56ec8da38875386f78b3[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Wed Sep 4 01:15:39 2024 +0300
+
+    RV
+    Glide
+
+[33mcommit baca91208008f916bc23bbc86c83dce5737b04e1[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Fri Aug 23 23:30:07 2024 +0300
+
+    SearchActivity - toolbar
+
+[33mcommit ed0a043196ff8405ec8056bd3a862f9dea6b39c1[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Fri Aug 23 01:58:52 2024 +0300
+
+    the layouts some bit fixed
+
+[33mcommit ec950f292db253f24e144ccd6d5c0a6a2876cbb5[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Wed Aug 21 22:22:43 2024 +0300
+
+    TextWatcher
+    Context
+    Intent
+
+[33mcommit 3148113d3f2998d461d68f3414a7f7cec964ae4b[m
+Merge: 89641ba 32d03fa
+Author: Iskarel <h1node@yandex.ru>
+Date:   Wed Aug 21 21:21:25 2024 +0300
+
+    Merge remote-tracking branch 'origin/dev' into dev
+    
+    # Conflicts:
+    #       app/src/main/AndroidManifest.xml
+    #       app/src/main/java/com/playlistmaker/MainActivity.kt
+    #       app/src/main/java/com/playlistmaker/MediaLibrary.kt
+    #       app/src/main/java/com/playlistmaker/SettingsActivity.kt
+    #       app/src/main/res/drawable/arrow_forward.xml
+    #       app/src/main/res/layout/activity_main.xml
+    #       app/src/main/res/layout/activity_search.xml
+    #       app/src/main/res/layout/activity_settings.xml
+    #       app/src/main/res/values/colors.xml
+    #       app/src/main/res/values/dimens.xml
+    #       app/src/main/res/values/strings.xml
+
+[33mcommit 89641bae20a8077ef35b85eb55b7806a73f1e558[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Tue Aug 20 20:52:35 2024 +0300
+
+    TextWatcher
+    Context
+    Intent
+
+[33mcommit 0bd2b3307c9e51dba4fcce6aa9e3436c5f3726eb[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Sat Aug 10 01:14:39 2024 +0300
+
+    i don't why, but my dev was empty
+
+[33mcommit 44c8ef0f22fffc5a002bce1ca251e15d33359db3[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Sat Aug 10 01:11:29 2024 +0300
+
+    i don't why, but my dev was empty
+
+[33mcommit 32d03fa11034c850c86a14da50c52ba9e618786e[m
+Merge: 0ed68fa de43500
+Author: Alex <168777214+h1node@users.noreply.github.com>
+Date:   Fri Aug 9 19:03:31 2024 +0300
+
+    Merge pull request #1 from h1node/master
+    
+    work_1
+
+[33mcommit de43500265cf32904f84e5172412a667b80a031a[m[33m ([m[1;32mmaster[m[33m)[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Mon Aug 5 21:36:45 2024 +0300
+
+    work_1
+
+[33mcommit c57e10e672795f73f984e7b993656f7105729adb[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Mon Aug 5 21:35:35 2024 +0300
+
+    work_1
+
+[33mcommit eb4c37ac4f5083816df5c4302880cabd15904f38[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Thu Aug 1 20:48:24 2024 +0300
+
+    work_1
+
+[33mcommit 0ed68facf542d9a11aafffbebfa064aee7aa7baa[m
+Author: Iskarel <h1node@yandex.ru>
+Date:   Thu Jul 25 19:55:30 2024 +0300
+
+    init commit
