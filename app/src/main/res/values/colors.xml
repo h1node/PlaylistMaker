@@ -12,9 +12,11 @@
 
     <!--    icon_colors-->
     <color name="colorLightNight">#1A1B22</color>
+    <color name="clear_history_button_color">#FFFFFF</color>
     <color name="music_item_color">#FFFFFF</color>
 
     <!--    text color-->
     <color name="refresh_button_text_color">#FFFFFF</color>
+
 
 </resources>
