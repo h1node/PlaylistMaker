@@ -56,11 +56,6 @@ class SearchActivity : AppCompatActivity() {
         setupPlaceholderButton()
         setupClearHistoryButton()
 
-        if (binding.searchEditText.text.isNullOrEmpty()) {
-            binding.hintTextView.visibility = View.VISIBLE
-        } else {
-            binding.hintTextView.visibility = View.GONE
-        }
 
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
         listener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
@@ -90,7 +85,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         searchAdapter = MusicRVAdapter { track ->
             addTrackToHistory(track)
-            Toast.makeText(this, "Clicked on track: ${track.trackName}", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Clicked on track: ${track.trackName}", Toast.LENGTH_SHORT).show()
         }
         binding.rvSearch.layoutManager = LinearLayoutManager(this)
         binding.rvSearch.adapter = searchAdapter
@@ -126,14 +121,6 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 inputText = s?.toString() ?: ""
-
-                if (binding.searchEditText.hasFocus() && s.isNullOrEmpty()) {
-                    binding.hintTextView.visibility = View.VISIBLE
-                } else {
-                    binding.hintTextView.visibility = View.GONE
-                }
-
-                if (s.isNullOrEmpty()) clearResults()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -173,8 +160,11 @@ class SearchActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     response.body()?.let { resultResponse ->
-                        if (resultResponse.results.isNotEmpty()) {
-                            searchAdapter.items = resultResponse.results
+                        val searchResult = resultResponse.results.filter { track ->
+                            !track.trackName.isNullOrBlank() && track.trackTimeMillis > 0
+                        }
+                        if (searchResult.isNotEmpty()) {
+                            searchAdapter.items = searchResult
                             searchAdapter.notifyDataSetChanged()
                         } else {
                             showPlaceholderMessage(
@@ -295,9 +285,6 @@ class SearchActivity : AppCompatActivity() {
             placeholderButton.visibility = if (refreshButton) View.VISIBLE else View.GONE
             if (imageRes == R.drawable.internet_error) {
                 placeholderButton.visibility = View.VISIBLE
-            }
-            if (text.isNotEmpty()) {
-                Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
             }
         }
 
