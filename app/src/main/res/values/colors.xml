@@ -8,6 +8,7 @@
 
     <color name="search_background">#E6E8EB</color>
     <color name="search_icon">#AEAFB4</color>
+    <color name="search_textHint">#AEAFB4</color>
     <color name="close_icon">#AEAFB4</color>
 
 

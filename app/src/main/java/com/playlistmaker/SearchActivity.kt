@@ -1,7 +1,6 @@
 package com.playlistmaker
 
 import android.content.Context
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -27,16 +26,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var searchAdapter: MusicRVAdapter
     private lateinit var historyAdapter: MusicRVAdapter
-    private lateinit var listener: OnSharedPreferenceChangeListener
     private var inputText: String = ""
     private var failedQuery: String? = null
     private val musicApi = ApiClient().getClient().create(MusicApi::class.java)
+    private var trackHistory: MutableList<Music> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,22 +54,8 @@ class SearchActivity : AppCompatActivity() {
         setupPlaceholderButton()
         setupClearHistoryButton()
 
-
-        val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        listener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == SEARCH_HISTORY) {
-                getSearchHistory()
-            }
-        }
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
         getSearchHistory()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        getSharedPreferences(SHARED_PREFS, MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(
-            listener
-        )
+        updateHistory()
     }
 
     private fun createJsonFromTrackList(trackList: List<Music>): String {
@@ -83,16 +67,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        searchAdapter = MusicRVAdapter { track ->
-            addTrackToHistory(track)
-//            Toast.makeText(this, "Clicked on track: ${track.trackName}", Toast.LENGTH_SHORT).show()
-        }
+        val trackClickListener: (Music) -> Unit = { track -> addTrackToHistory(track) }
+        searchAdapter = MusicRVAdapter(trackClickListener)
+        historyAdapter = MusicRVAdapter(trackClickListener)
+
         binding.rvSearch.layoutManager = LinearLayoutManager(this)
         binding.rvSearch.adapter = searchAdapter
 
-        historyAdapter = MusicRVAdapter { track ->
-            addTrackToHistory(track)
-        }
         binding.rvHistory.layoutManager = LinearLayoutManager(this)
         binding.rvHistory.adapter = historyAdapter
     }
@@ -145,7 +126,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupClearHistoryButton() {
-        binding.clearAdapter.setOnClickListener {
+        binding.clearHistory.setOnClickListener {
             clearSearchHistory()
         }
     }
@@ -160,7 +141,9 @@ class SearchActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     response.body()?.let { resultResponse ->
+                        Log.d("APIResponse", "API response: ${Gson().toJson(resultResponse.results)}")
                         val searchResult = resultResponse.results.filter { track ->
+                            Log.d("TrackInfo", "Track name: ${track.trackName}, Time: ${track.trackTimeMillis}")
                             !track.trackName.isNullOrBlank() && track.trackTimeMillis > 0
                         }
                         if (searchResult.isNotEmpty()) {
@@ -188,6 +171,10 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ResultResponse>, t: Throwable) {
+                binding.rvHistory.visibility = View.GONE
+                binding.clearHistory.visibility = View.GONE
+                binding.searched.visibility = View.GONE
+
                 if (searchAdapter.items.isEmpty()) {
                     showPlaceholderMessage(
                         getString(R.string.connection_problem),
@@ -201,52 +188,41 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun addTrackToHistory(track: Music) {
-        val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        val trackListJson = sharedPreferences.getString(SEARCH_HISTORY, null)
-        val trackList = if (trackListJson != null) {
-            createTrackListFromJson(trackListJson).toMutableList()
-        } else {
-            mutableListOf()
+        trackHistory.removeAll { it.trackName == track.trackName && it.artistName == track.artistName }
+        trackHistory.add(0, track)
+        if (trackHistory.size > 10) {
+            trackHistory.removeAt(10)
         }
-        trackList.removeAll { it.trackName == track.trackName && it.artistName == track.artistName }
-        trackList.add(0, track)
-        if (trackList.size > 10) {
-            trackList.removeAt(10)
-        }
-
-        val newTrackListJson = createJsonFromTrackList(trackList)
-        sharedPreferences.edit().putString(SEARCH_HISTORY, newTrackListJson).apply()
-        historyAdapter.items = trackList
-        historyAdapter.notifyDataSetChanged()
-
-        binding.searched.visibility = View.VISIBLE
-        binding.clearAdapter.visibility = View.VISIBLE
+        saveSearchHistory()
+        updateHistory()
     }
 
     private fun getSearchHistory() {
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
         val trackListJson = sharedPreferences.getString(SEARCH_HISTORY, null)
         if (trackListJson != null) {
-            val trackList = createTrackListFromJson(trackListJson)
-            historyAdapter.items = trackList
-            historyAdapter.notifyDataSetChanged()
-
-            binding.searched.visibility = View.VISIBLE
-            binding.clearAdapter.visibility = View.VISIBLE
-        } else {
-            binding.searched.visibility = View.GONE
-            binding.clearAdapter.visibility = View.GONE
+            trackHistory = createTrackListFromJson(trackListJson).toMutableList()
         }
     }
 
-    private fun clearSearchHistory() {
+    private fun saveSearchHistory() {
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        sharedPreferences.edit().remove(SEARCH_HISTORY).apply()
-        historyAdapter.items = emptyList()
+        sharedPreferences.edit().putString(SEARCH_HISTORY, createJsonFromTrackList(trackHistory))
+            .apply()
+    }
+
+    private fun clearSearchHistory() {
+        trackHistory.clear()
+        saveSearchHistory()
+        updateHistory()
+    }
+
+    private fun updateHistory() {
+        historyAdapter.items = trackHistory
         historyAdapter.notifyDataSetChanged()
 
-        binding.searched.visibility = View.GONE
-        binding.clearAdapter.visibility = View.GONE
+        binding.searched.visibility = if (trackHistory.isNotEmpty()) View.VISIBLE else View.GONE
+        binding.clearHistory.visibility = if (trackHistory.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -275,7 +251,13 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showPlaceholderMessage(text: String, imageRes: Int, refreshButton: Boolean) =
         with(binding) {
+            hideKeyboard()
             clearResults()
+
+            rvHistory.visibility = View.GONE
+            clearHistory.visibility = View.GONE
+            searched.visibility = View.GONE
+
             placeholderMessage.text = text
             placeholderMessage.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
 
@@ -293,11 +275,11 @@ class SearchActivity : AppCompatActivity() {
         searchAdapter.notifyDataSetChanged()
     }
 
-    private fun hidePlaceholderMessage() {
-        binding.placeholderMessage.visibility = View.GONE
-        binding.placeholderImageMusic.visibility = View.GONE
-        binding.placeholderImageInternet.visibility = View.GONE
-        binding.placeholderButton.visibility = View.GONE
+    private fun hidePlaceholderMessage() = with(binding) {
+        placeholderMessage.visibility = View.GONE
+        placeholderImageMusic.visibility = View.GONE
+        placeholderImageInternet.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
     }
 
     companion object {
@@ -306,4 +288,3 @@ class SearchActivity : AppCompatActivity() {
         const val SEARCH_HISTORY = "search_history"
     }
 }
-

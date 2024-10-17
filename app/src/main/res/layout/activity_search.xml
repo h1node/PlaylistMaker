@@ -37,7 +37,7 @@
             android:padding="@dimen/padding_8dp"
             android:singleLine="true"
             android:textColor="@color/YP_Black"
-            android:textColorHint="@color/YP_Black"
+            android:textColorHint="@color/search_textHint"
             android:textCursorDrawable="@drawable/search_cursor_color" />
 
         <ImageView
@@ -82,7 +82,7 @@
             tools:listitem="@layout/music_item" />
 
         <Button
-            android:id="@+id/clear_adapter"
+            android:id="@+id/clear_history"
             style="@style/clear_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
