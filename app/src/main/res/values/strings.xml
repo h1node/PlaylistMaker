@@ -20,6 +20,9 @@
     <string name="Refresh">Обновить</string>
     <string name="connection_problem">Проблемы со связью\n\n
         Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="search_hint">Вводите название, можно указать год для более точного поиска</string>
+    <string name="you_looking_for">Вы искали</string>
+    <string name="Clear_the_history">Очистить историю</string>
 
 
 </resources>

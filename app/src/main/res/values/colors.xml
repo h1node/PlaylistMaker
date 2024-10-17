@@ -8,13 +8,17 @@
 
     <color name="search_background">#E6E8EB</color>
     <color name="search_icon">#AEAFB4</color>
+    <color name="search_textHint">#AEAFB4</color>
+    <color name="close_icon">#AEAFB4</color>
 
 
     <!--    icon_colors-->
     <color name="colorLightNight">#1A1B22</color>
+    <color name="clear_history_button_color">#FFFFFF</color>
     <color name="music_item_color">#FFFFFF</color>
 
     <!--    text color-->
     <color name="refresh_button_text_color">#FFFFFF</color>
+
 
 </resources>

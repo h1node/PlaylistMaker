@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface MusicApi {
 
-    @GET("/search")
+    @GET("/search?entity=song")
     fun getMusic(
         @Query("term") text: String
     ): Call<ResultResponse>

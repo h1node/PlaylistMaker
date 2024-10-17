@@ -60,19 +60,16 @@
                         style="@style/MusicItem"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:lines="1"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:scrollHorizontally="true"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="@dimen/music_item_13sp"
                         tools:text="@tools:sample/full_names" />
 
                     <ImageView
-                        android:layout_width="match_parent"
+                        android:layout_width="10dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_separator" />
 
                     <TextView
