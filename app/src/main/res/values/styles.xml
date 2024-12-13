@@ -11,6 +11,7 @@
         <item name="android:font">@font/ys_display_medium</item>
         <item name="cornerRadius">@dimen/button_radius</item>
         <item name="iconGravity">textStart</item>
+        <item name="textAllCaps">false</item>
         <item name="iconTint">@color/YP_Black</item>
     </style>
 
@@ -39,6 +40,12 @@
         <item name="android:textSize">@dimen/setting_text_size_activity</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="clear_button">
+        <item name="cornerRadius">54dp</item>
+        <item name="backgroundTint">@color/colorLightNight</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 
 </resources>
