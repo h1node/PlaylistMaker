@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     //Main
+    <dimen name="textSize_22">22sp</dimen>
     <dimen name="padding_layout">13dp</dimen>
     <dimen name="medium_text_size">22sp</dimen>
     <dimen name="button_radius">16dp</dimen>
     <dimen name="icon_padding">8dp</dimen>
     <dimen name="margin_start_16">16dp</dimen>
-    <dimen name="margin_end_12">12dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
 
 
     //Settings Activity
@@ -28,6 +29,8 @@
     <dimen name="music_item_13sp">13sp</dimen>
     <dimen name="music_item_16sp">16sp</dimen>
     <dimen name="YS_medium_19sp">19sp</dimen>
+
+    <dimen name="textSize_14">14sp</dimen>
 </resources>
 
 

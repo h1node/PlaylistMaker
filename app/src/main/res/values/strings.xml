@@ -24,5 +24,12 @@
     <string name="you_looking_for">Вы искали</string>
     <string name="Clear_the_history">Очистить историю</string>
 
+    <!--    AudioPlayer-->
+    <string name="country">Страна:</string>
+    <string name="genre">Жанр:</string>
+    <string name="release_date">Год:</string>
+    <string name="album">Альбом:</string>
+    <string name="duration">Длительность:</string>
+
 
 </resources>

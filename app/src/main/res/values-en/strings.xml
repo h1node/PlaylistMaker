@@ -16,4 +16,9 @@
     <string name="search_hint">Enter the name, you can specify the year for a more accurate search</string>
     <string name="you_looking_for">Recent requests</string>
     <string name="Clear_the_history">Clear the history</string>
+    <string name="country">Country:</string>
+    <string name="genre">Genre:</string>
+    <string name="release_date">Released:</string>
+    <string name="album">Album:</string>
+    <string name="duration">Duration:</string>
 </resources>

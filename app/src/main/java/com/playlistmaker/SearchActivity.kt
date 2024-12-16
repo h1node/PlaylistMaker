@@ -1,6 +1,7 @@
 package com.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -67,7 +68,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        val trackClickListener: (Music) -> Unit = { track -> addTrackToHistory(track) }
+        val trackClickListener: (Music) -> Unit = { track ->
+            addTrackToHistory(track)
+            openAudioPlayer(track)
+        }
         searchAdapter = MusicRVAdapter(trackClickListener)
         historyAdapter = MusicRVAdapter(trackClickListener)
 
@@ -77,6 +81,15 @@ class SearchActivity : AppCompatActivity() {
         binding.rvHistory.layoutManager = LinearLayoutManager(this)
         binding.rvHistory.adapter = historyAdapter
     }
+
+    private fun openAudioPlayer(track: Music) {
+        val intent = Intent(this, AudioPlayerActivity::class.java).apply {
+            putExtra("track", track)
+        }
+        startActivity(intent)
+
+    }
+
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
@@ -141,10 +154,16 @@ class SearchActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     response.body()?.let { resultResponse ->
-                        Log.d("APIResponse", "API response: ${Gson().toJson(resultResponse.results)}")
+                        Log.d(
+                            "APIResponse",
+                            "API response: ${Gson().toJson(resultResponse.results)}"
+                        )
                         val searchResult = resultResponse.results.filter { track ->
-                            Log.d("TrackInfo", "Track name: ${track.trackName}, Time: ${track.trackTimeMillis}")
-                            !track.trackName.isNullOrBlank() && track.trackTimeMillis > 0
+                            Log.d(
+                                "TrackInfo",
+                                "Track name: ${track.trackName}, Time: ${track.trackTimeMillis}"
+                            )
+                            !track.trackName.isNullOrBlank() && track.trackTimeMillis!! > 0
                         }
                         if (searchResult.isNotEmpty()) {
                             searchAdapter.items = searchResult
@@ -261,8 +280,10 @@ class SearchActivity : AppCompatActivity() {
             placeholderMessage.text = text
             placeholderMessage.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
 
-            placeholderImageInternet.visibility = if (imageRes == R.drawable.internet_error) View.VISIBLE else View.GONE
-            placeholderImageMusic.visibility = if (imageRes != R.drawable.internet_error) View.VISIBLE else View.GONE
+            placeholderImageInternet.visibility =
+                if (imageRes == R.drawable.internet_error) View.VISIBLE else View.GONE
+            placeholderImageMusic.visibility =
+                if (imageRes != R.drawable.internet_error) View.VISIBLE else View.GONE
 
             placeholderButton.visibility = if (refreshButton) View.VISIBLE else View.GONE
             if (imageRes == R.drawable.internet_error) {
