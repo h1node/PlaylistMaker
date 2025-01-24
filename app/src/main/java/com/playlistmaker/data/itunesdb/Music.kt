@@ -13,5 +13,6 @@ data class Music(
     val collectionName: String?,
     val releaseDate: Date?,
     val primaryGenreName: String?,
-    val country: String?
+    val country: String?,
+    val previewUrl: String?
 ) : Parcelable

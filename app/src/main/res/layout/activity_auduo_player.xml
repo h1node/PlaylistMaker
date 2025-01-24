@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_begin="206dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/leftBorder"
@@ -72,8 +72,8 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:fontFamily="@font/ys_display_medium"
-            android:lines="1"
             android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="2"
             android:scrollHorizontally="true"
             android:textAlignment="textStart"
             android:textColor="@color/colorLightNight"
@@ -140,18 +140,26 @@
             app:layout_constraintTop_toTopOf="@id/play" />
 
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/buttonBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="play,pause" />
+
         <TextView
-            android:id="@+id/time"
-            android:layout_width="0dp"
+            android:id="@+id/trackProgress"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/ys_display_medium"
             android:gravity="center"
             android:text="0:30"
             android:textColor="@color/colorLightNight"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/play"
-            app:layout_constraintStart_toStartOf="@id/play"
-            app:layout_constraintTop_toBottomOf="@id/play" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonBarrier" />
+
 
         <TextView
             android:id="@+id/duration"
@@ -161,15 +169,16 @@
             android:layout_marginTop="30dp"
             android:text="@string/duration"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/time" />
+            app:layout_constraintTop_toBottomOf="@id/trackProgress" />
 
         <TextView
             android:id="@+id/trackTimeMills"
             style="@style/AudioPlayerText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@id/duration"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/centerGuideline"
             app:layout_constraintTop_toTopOf="@id/duration"
             tools:text="5:35" />
 
@@ -193,7 +202,6 @@
             android:maxLines="1"
             app:layout_constraintBottom_toBottomOf="@id/album"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/centerGuideline"
             tools:text="Yesterday (Remastered 2009)" />
 
@@ -211,10 +219,11 @@
         <TextView
             android:id="@+id/releaseDate"
             style="@style/AudioPlayerText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@id/age"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/centerGuideline"
             tools:text="1965" />
 
         <TextView
@@ -230,10 +239,11 @@
         <TextView
             android:id="@+id/primaryGenreName"
             style="@style/AudioPlayerText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@id/genre"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/centerGuideline"
             tools:text="Rock" />
 
         <TextView
@@ -251,10 +261,11 @@
         <TextView
             android:id="@+id/country"
             style="@style/AudioPlayerText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@id/place"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/centerGuideline"
             tools:text="Великобритания" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
