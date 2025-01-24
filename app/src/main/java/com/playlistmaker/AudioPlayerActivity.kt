@@ -2,7 +2,10 @@ package com.playlistmaker
 
 
 import android.icu.text.SimpleDateFormat
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -16,6 +19,20 @@ import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAuduoPlayerBinding
+    private var playerState = STATE_DEFAULT
+    private var mediaPlayer = MediaPlayer()
+    private val handler = Handler(Looper.getMainLooper())
+    private val progressTask = object : Runnable {
+        override fun run() {
+            if (playerState == STATE_PLAYING) {
+                val currentPosition = mediaPlayer.currentPosition
+                binding.trackProgress.text =
+                    SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
+                handler.postDelayed(this, 500)
+            }
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +46,71 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         setupToolbar()
         retrieveTrackDetails()
+
+        binding.trackProgress.text = "00:00"
+        preparePlayer()
+
+        binding.play.setOnClickListener {
+            playbackControl()
+        }
+        binding.pause.setOnClickListener {
+            playbackControl()
+        }
+    }
+
+    private fun preparePlayer() {
+        val track = intent.getParcelableExtra<Music>("track")
+        val previewUrl = track?.previewUrl
+        mediaPlayer.setDataSource(previewUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            binding.play.isEnabled = true
+            playerState = STATE_PREPARED
+            handler.post(progressTask)
+        }
+
+        mediaPlayer.setOnCompletionListener {
+            playerState = STATE_PREPARED
+            handler.removeCallbacks(progressTask)
+            binding.play.visibility = View.VISIBLE
+            binding.pause.visibility = View.GONE
+            binding.trackProgress.text = "00:00"
+        }
+    }
+
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> pausePlayer()
+            STATE_PREPARED, STATE_PAUSED ->
+                startPlayer()
+        }
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playerState = STATE_PAUSED
+        handler.removeCallbacks(progressTask)
+        binding.play.visibility = View.VISIBLE
+        binding.pause.visibility = View.GONE
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playerState = STATE_PLAYING
+        handler.post(progressTask)
+        binding.play.visibility = View.GONE
+        binding.pause.visibility = View.VISIBLE
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(progressTask)
+        mediaPlayer.release()
     }
 
     private fun setupToolbar() {
@@ -75,5 +157,12 @@ class AudioPlayerActivity : AppCompatActivity() {
                     .into(image)
             }
         }
+    }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
     }
 }

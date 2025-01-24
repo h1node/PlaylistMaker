@@ -3,9 +3,10 @@ package com.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -36,6 +37,8 @@ class SearchActivity : AppCompatActivity() {
     private var failedQuery: String? = null
     private val musicApi = ApiClient().getClient().create(MusicApi::class.java)
     private var trackHistory: MutableList<Music> = mutableListOf()
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,11 +86,31 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun openAudioPlayer(track: Music) {
-        val intent = Intent(this, AudioPlayerActivity::class.java).apply {
-            putExtra("track", track)
+        if (clickDebounce()) {
+            val intent = Intent(this, AudioPlayerActivity::class.java).apply {
+                putExtra("track", track)
+            }
+            startActivity(intent)
         }
-        startActivity(intent)
+    }
 
+    private fun searchDebounce() {
+        val query = binding.searchEditText.text.toString().trim()
+        handler.removeCallbacksAndMessages(null)
+        if (query.isNotEmpty()) {
+            handler.postDelayed({ searchMusic(query) }, SEARCH_DEBOUNCE_DELAY)
+        } else {
+            clearResults()
+        }
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
 
@@ -113,6 +136,7 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchDebounce()
                 binding.clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 inputText = s?.toString() ?: ""
             }
@@ -147,63 +171,64 @@ class SearchActivity : AppCompatActivity() {
     private fun searchMusic(query: String) {
         failedQuery = query
         hidePlaceholderMessage()
-        musicApi.getMusic(query).enqueue(object : Callback<ResultResponse> {
-            override fun onResponse(
-                call: Call<ResultResponse>,
-                response: Response<ResultResponse>
-            ) {
-                if (response.isSuccessful) {
-                    response.body()?.let { resultResponse ->
-                        Log.d(
-                            "APIResponse",
-                            "API response: ${Gson().toJson(resultResponse.results)}"
+
+        if (query.isNotEmpty()) {
+            binding.progressContainer.visibility = View.VISIBLE
+            binding.rvSearch.visibility = View.GONE
+
+            musicApi.getMusic(query).enqueue(object : Callback<ResultResponse> {
+                override fun onResponse(
+                    call: Call<ResultResponse>,
+                    response: Response<ResultResponse>
+                ) {
+                    binding.progressContainer.visibility = View.GONE
+                    binding.rvSearch.visibility = View.VISIBLE
+
+                    if (response.isSuccessful) {
+                        response.body()?.let { resultResponse ->
+                            val searchResult = resultResponse.results.filter { track ->
+                                !track.trackName.isNullOrBlank() && track.trackTimeMillis!! > 0
+                            }
+                            if (searchResult.isNotEmpty()) {
+                                searchAdapter.items = searchResult
+                                searchAdapter.notifyDataSetChanged()
+                            } else {
+                                showPlaceholderMessage(
+                                    getString(R.string.nothing_was_found),
+                                    R.drawable.music_error,
+                                    false
+                                )
+                            }
+                        } ?: showPlaceholderMessage(
+                            getString(R.string.nothing_was_found),
+                            R.drawable.music_error,
+                            false
                         )
-                        val searchResult = resultResponse.results.filter { track ->
-                            Log.d(
-                                "TrackInfo",
-                                "Track name: ${track.trackName}, Time: ${track.trackTimeMillis}"
-                            )
-                            !track.trackName.isNullOrBlank() && track.trackTimeMillis!! > 0
-                        }
-                        if (searchResult.isNotEmpty()) {
-                            searchAdapter.items = searchResult
-                            searchAdapter.notifyDataSetChanged()
-                        } else {
-                            showPlaceholderMessage(
-                                getString(R.string.nothing_was_found),
-                                R.drawable.music_error,
-                                false
-                            )
-                        }
-                    } ?: showPlaceholderMessage(
-                        getString(R.string.nothing_was_found),
-                        R.drawable.music_error,
-                        false
-                    )
-                } else {
-                    showPlaceholderMessage(
-                        getString(R.string.nothing_was_found),
-                        R.drawable.music_error,
-                        false
-                    )
+                    } else {
+                        showPlaceholderMessage(
+                            getString(R.string.nothing_was_found),
+                            R.drawable.music_error,
+                            false
+                        )
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<ResultResponse>, t: Throwable) {
-                binding.rvHistory.visibility = View.GONE
-                binding.clearHistory.visibility = View.GONE
-                binding.searched.visibility = View.GONE
+                override fun onFailure(call: Call<ResultResponse>, t: Throwable) {
+                    binding.progressContainer.visibility = View.GONE
+                    binding.rvHistory.visibility = View.GONE
+                    binding.clearHistory.visibility = View.GONE
+                    binding.searched.visibility = View.GONE
 
-                if (searchAdapter.items.isEmpty()) {
-                    showPlaceholderMessage(
-                        getString(R.string.connection_problem),
-                        R.drawable.internet_error,
-                        false
-                    )
+                    if (searchAdapter.items.isEmpty()) {
+                        showPlaceholderMessage(
+                            getString(R.string.connection_problem),
+                            R.drawable.internet_error,
+                            false
+                        )
+                    }
                 }
-                Log.e("SearchActivity", "Error!!", t)
-            }
-        })
+            })
+        }
     }
 
     private fun addTrackToHistory(track: Music) {
@@ -307,5 +332,7 @@ class SearchActivity : AppCompatActivity() {
         const val EDIT_TEXT_KEY = "SOMETHING_TEXT"
         const val SHARED_PREFS = "shared_prefs"
         const val SEARCH_HISTORY = "search_history"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
