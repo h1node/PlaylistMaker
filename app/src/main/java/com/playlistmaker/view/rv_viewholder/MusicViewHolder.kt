@@ -17,7 +17,8 @@ class MusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(music: Music) = with(binding) {
         musicTitle.text = music.trackName
         artistName.text = music.artistName
-        time.text = formatTrackTime(music.trackTimeMillis)
+        time.text = music.trackTimeMillis?.let { formatTrackTime(it) }
+
         Glide.with(itemView)
             .load(music.artworkUrl100)
             .centerCrop()

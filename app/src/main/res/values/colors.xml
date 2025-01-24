@@ -10,6 +10,7 @@
     <color name="search_icon">#AEAFB4</color>
     <color name="search_textHint">#AEAFB4</color>
     <color name="close_icon">#AEAFB4</color>
+    <color name="gray_text">#AEAFB4</color>
 
 
     <!--    icon_colors-->
