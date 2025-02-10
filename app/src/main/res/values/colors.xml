@@ -20,6 +20,7 @@
 
     <!--    text color-->
     <color name="refresh_button_text_color">#FFFFFF</color>
+    <color name="progress_bar_color">#3772E7</color>
 
 
 </resources>
