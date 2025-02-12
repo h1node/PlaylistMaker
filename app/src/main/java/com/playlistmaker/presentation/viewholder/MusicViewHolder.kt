@@ -1,4 +1,4 @@
-package com.playlistmaker.view.rv_viewholder
+package com.playlistmaker.presentation.viewholder
 
 import android.content.Context
 import android.util.TypedValue
@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
-import com.playlistmaker.data.itunesdb.Music
 import com.playlistmaker.databinding.MusicItemBinding
+import com.playlistmaker.domain.models.Music
 
 
 class MusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

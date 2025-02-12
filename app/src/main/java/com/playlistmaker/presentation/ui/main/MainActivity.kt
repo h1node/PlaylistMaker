@@ -1,4 +1,4 @@
-package com.playlistmaker
+package com.playlistmaker.presentation.ui.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.playlistmaker.databinding.ActivityMainBinding
+import com.playlistmaker.presentation.ui.media.MediaLibrary
+import com.playlistmaker.presentation.ui.search.SearchActivity
+import com.playlistmaker.presentation.ui.settings.SettingsActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,5 +40,7 @@ class MainActivity : AppCompatActivity() {
             val searchDisplay = Intent(this, SearchActivity::class.java)
             startActivity(searchDisplay)
         }
+
+
     }
 }
