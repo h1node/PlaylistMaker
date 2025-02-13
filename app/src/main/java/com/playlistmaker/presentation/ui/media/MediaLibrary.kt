@@ -1,10 +1,11 @@
-package com.playlistmaker
+package com.playlistmaker.presentation.ui.media
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivityMediaLibraryBinding
 
 class MediaLibrary : AppCompatActivity() {

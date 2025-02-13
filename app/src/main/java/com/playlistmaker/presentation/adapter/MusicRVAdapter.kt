@@ -1,18 +1,23 @@
-package com.playlistmaker.view.rv_adapter
+package com.playlistmaker.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.playlistmaker.R
-import com.playlistmaker.data.itunesdb.Music
-import com.playlistmaker.view.rv_viewholder.MusicViewHolder
+import com.playlistmaker.domain.models.Music
+import com.playlistmaker.presentation.viewholder.MusicViewHolder
 
 class MusicRVAdapter(
     private val clickListener: (Music) -> Unit
 ) :
     RecyclerView.Adapter<MusicViewHolder>() {
-    var items: List<Music> = listOf()
+
+    var items: List<Music> = emptyList()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicViewHolder {

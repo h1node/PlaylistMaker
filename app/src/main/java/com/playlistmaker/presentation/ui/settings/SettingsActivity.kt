@@ -1,4 +1,4 @@
-package com.playlistmaker
+package com.playlistmaker.presentation.ui.settings
 
 
 import android.content.Intent
@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.playlistmaker.R
+import com.playlistmaker.core.App
 import com.playlistmaker.databinding.ActivitySettingsBinding
 
 

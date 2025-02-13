@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/padding_layout"
-    tools:context=".SettingsActivity">
+    tools:context=".presentation.ui.settings.SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/setting_toolbar"
@@ -20,8 +20,14 @@
         android:id="@+id/switch_button"
         style="@style/SettingText"
         android:text="@string/dark_themes"
-        app:thumbTint="@color/YP_Blue"
-        app:trackTint="@color/switch_track_color" />
+        app:thumbTint="@color/thumbTint_switch_on_off"
+        app:trackTint="@color/trackTint_switch_on_off" />
+
+    <TextView
+        android:id="@+id/share"
+        style="@style/SettingText"
+        android:text="@string/Share"
+        app:drawableEndCompat="@drawable/share" />
 
     <TextView
         android:id="@+id/support"
@@ -29,11 +35,6 @@
         android:text="@string/support"
         app:drawableEndCompat="@drawable/support" />
 
-    <TextView
-        android:id="@+id/share"
-        style="@style/SettingText"
-        android:text="@string/Share"
-        app:drawableEndCompat="@drawable/share" />
 
     <TextView
         android:id="@+id/user_agreement"
