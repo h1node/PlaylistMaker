@@ -12,6 +12,10 @@
     <color name="close_icon">#AEAFB4</color>
     <color name="gray_text">#AEAFB4</color>
 
+    //switch button
+    <color name="thumbTint_switch_on_off">#AEAFB4</color>
+    <color name="trackTint_switch_on_off">#E6E8EB</color>
+
 
     <!--    icon_colors-->
     <color name="colorLightNight">#1A1B22</color>
