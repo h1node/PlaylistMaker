@@ -1,11 +1,9 @@
 package com.playlistmaker.data.impl
 
-import android.content.SharedPreferences
-import com.google.gson.Gson
 import com.playlistmaker.data.api.MusicApi
 import com.playlistmaker.data.models.ResultResponse
 import com.playlistmaker.domain.models.Music
-import com.playlistmaker.domain.repositories.MusicRepository
+import com.playlistmaker.domain.repositories.MusicSearchRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,8 +11,7 @@ import retrofit2.Response
 
 class MusicRepositoryImpl(
     private val api: MusicApi,
-    private val sharedPreferences: SharedPreferences
-) : MusicRepository {
+) : MusicSearchRepository {
 
     override fun searchMusic(
         query: String,
@@ -43,20 +40,5 @@ class MusicRepositoryImpl(
             }
 
         })
-    }
-
-    override fun saveSearchHistory(trackList: List<Music>) {
-        sharedPreferences.edit()
-            .putString("SEARCH_HISTORY", Gson().toJson(trackList))
-            .apply()
-    }
-
-    override fun getSearchHistory(): List<Music> {
-        val json = sharedPreferences.getString("SEARCH_HISTORY", null)
-        return json?.let { Gson().fromJson(it, Array<Music>::class.java).toList() } ?: emptyList()
-    }
-
-    override fun clearSearchHistory() {
-        sharedPreferences.edit().remove("SEARCH_HISTORY").apply()
     }
 }

@@ -17,13 +17,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.playlistmaker.R
-import com.playlistmaker.core.App
-import com.playlistmaker.data.api.ApiClient
-import com.playlistmaker.data.api.MusicApi
-import com.playlistmaker.data.impl.MusicRepositoryImpl
+import com.playlistmaker.core.Creator
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.domain.models.Music
-import com.playlistmaker.domain.repositories.MusicRepository
 import com.playlistmaker.domain.usecase.ClearSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.GetSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.ManageSearchHistoryUseCase
@@ -42,12 +38,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var getSearchHistoryUseCase: GetSearchHistoryUseCase
     private lateinit var clearSearchHistoryUseCase: ClearSearchHistoryUseCase
 
-    private lateinit var musicRepository: MusicRepository
-    private lateinit var historyRepository: MusicRepository
-
     private val handler = Handler(Looper.getMainLooper())
     private var inputText: String = ""
     private var isClickAllowed = true
+
+    private lateinit var creator: Creator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,22 +55,15 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        val sharedPreferences = getSharedPreferences(App.SHARED_PREFS, MODE_PRIVATE)
-        val apiClient = ApiClient().createRetrofit().create(MusicApi::class.java)
+        creator = Creator(this)
 
-        musicRepository = MusicRepositoryImpl(apiClient, sharedPreferences)
-        historyRepository = musicRepository
+        searchMusicUseCase = creator.searchMusicUseCase
+        manageSearchHistoryUseCase = creator.manageSearchHistoryUseCase
+        getSearchHistoryUseCase = creator.getSearchHistoryUseCase
+        clearSearchHistoryUseCase = creator.clearSearchHistoryUseCase
 
-        initUseCases()
         setupUI()
         updateHistory()
-    }
-
-    private fun initUseCases() {
-        searchMusicUseCase = SearchMusicUseCase(musicRepository)
-        manageSearchHistoryUseCase = ManageSearchHistoryUseCase(historyRepository)
-        getSearchHistoryUseCase = GetSearchHistoryUseCase(historyRepository)
-        clearSearchHistoryUseCase = ClearSearchHistoryUseCase(historyRepository)
     }
 
     private fun setupUI() {
@@ -116,7 +104,6 @@ class SearchActivity : AppCompatActivity() {
         }
         return current
     }
-
 
     private fun searchDebounce() {
         val query = binding.searchEditText.text.toString().trim()
@@ -237,5 +224,4 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
-
 }
