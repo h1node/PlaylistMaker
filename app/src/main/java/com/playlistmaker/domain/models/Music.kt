@@ -1,4 +1,4 @@
-package com.playlistmaker.data.itunesdb
+package com.playlistmaker.domain.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

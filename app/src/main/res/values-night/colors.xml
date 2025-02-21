@@ -6,6 +6,10 @@
     <color name="search_icon">#1A1B22</color>
     <color name="close_icon">#1A1B22</color>
 
+    //switch button
+    <color name="thumbTint_switch_on_off">#3772E7</color>
+    <color name="trackTint_switch_on_off">#9FBBF3</color>
+
     <color name="music_item_color">#1A1B22</color>
 
     <!--    text color-->

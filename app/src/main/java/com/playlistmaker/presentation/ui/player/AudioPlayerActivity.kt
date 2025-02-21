@@ -1,4 +1,4 @@
-package com.playlistmaker
+package com.playlistmaker.presentation.ui.player
 
 
 import android.icu.text.SimpleDateFormat
@@ -13,8 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.playlistmaker.data.itunesdb.Music
+import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivityAuduoPlayerBinding
+import com.playlistmaker.domain.models.Music
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
