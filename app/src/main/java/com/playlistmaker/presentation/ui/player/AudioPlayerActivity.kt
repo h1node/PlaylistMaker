@@ -12,21 +12,21 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.playlistmaker.R
-import com.playlistmaker.databinding.ActivityAuduoPlayerBinding
+import com.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.presentation.ui.player.viewmodel.AudioPlayerViewModel
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAuduoPlayerBinding
+    private lateinit var binding: ActivityAudioPlayerBinding
     private val viewModel: AudioPlayerViewModel by viewModels {
-        AudioPlayerViewModel.getViewModelFactory(application, intent.getParcelableExtra("track"))
+        AudioPlayerViewModel.getViewModelFactory(application, intent?.getParcelableExtra("track"))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityAuduoPlayerBinding.inflate(layoutInflater)
+        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupWindowInsets()
@@ -50,21 +50,18 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun displayTrackDetails() {
-        val track = intent.getParcelableExtra<Music>("track") ?: return
+        val track = intent?.getParcelableExtra<Music>("track") ?: return
         with(binding) {
             songTitle.text = track.trackName
             artistName.text = track.artistName
-            releaseDate.text =
-                track.releaseDate?.let { SimpleDateFormat("yyyy", Locale.getDefault()).format(it) }
-                    ?: ""
+            releaseDate.text = track.releaseDate?.let {
+                SimpleDateFormat("yyyy", Locale.getDefault()).format(it)
+            } ?: ""
             country.text = track.country
             collectionName.text = track.collectionName
-            collectionName.visibility =
-                if (track.collectionName.isNullOrEmpty()) View.GONE else View.VISIBLE
+            collectionName.visibility = getVisibility(track.collectionName)
             primaryGenreName.text = track.primaryGenreName
-            trackTimeMills.text = track.trackTimeMillis?.let {
-                String.format("%02d:%02d", it / 60000, (it % 60000) / 1000)
-            } ?: "00:00"
+            trackTimeMills.text = track.trackTimeMillis?.let { formatTrackTime(it) } ?: "00:00"
 
             Glide.with(image)
                 .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
@@ -73,21 +70,41 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
+    private fun getVisibility(text: String?): Int {
+        return if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
+    }
+
+    private fun formatTrackTime(millis: Int): String {
+        return String.format("%02d:%02d", millis / 60000, (millis % 60000) / 1000)
+    }
+
     private fun observeViewModel() {
         viewModel.observePlayerState().observe(this) { state ->
             binding.play.isEnabled = state != AudioPlayerViewModel.STATE_DEFAULT
+            updateButtonVisibility(state)
         }
 
         viewModel.observeProgress().observe(this) { progress ->
             binding.trackProgress.text = progress
         }
+    }
 
-        viewModel.observePlayButtonVisibility().observe(this) { visibility ->
-            binding.play.visibility = visibility
-        }
+    private fun updateButtonVisibility(state: Int) {
+        when (state) {
+            AudioPlayerViewModel.STATE_PLAYING -> {
+                binding.play.visibility = View.GONE
+                binding.pause.visibility = View.VISIBLE
+            }
 
-        viewModel.observePauseButtonVisibility().observe(this) { visibility ->
-            binding.pause.visibility = visibility
+            AudioPlayerViewModel.STATE_PAUSED, AudioPlayerViewModel.STATE_PREPARED -> {
+                binding.play.visibility = View.VISIBLE
+                binding.pause.visibility = View.GONE
+            }
+
+            else -> {
+                binding.play.visibility = View.VISIBLE
+                binding.pause.visibility = View.GONE
+            }
         }
     }
 
@@ -98,7 +115,9 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.playbackControl()
+        if (viewModel.observePlayerState().value == AudioPlayerViewModel.STATE_PLAYING) {
+            viewModel.playbackControl()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

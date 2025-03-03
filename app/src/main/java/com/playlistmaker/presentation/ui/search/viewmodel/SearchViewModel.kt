@@ -65,24 +65,22 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
-            if (newSearchText.isNotEmpty()) {
-                renderState(SearchState.Loading)
+            renderState(SearchState.Loading)
 
-                searchMusicUseCase.execute(
-                    query = newSearchText,
-                    callback = { result ->
-                        if (result.isNotEmpty()) {
-                            renderState(SearchState.Content(result))
-                        } else {
-                            renderState(SearchState.Empty(getApplication<Application>().getString(R.string.nothing_was_found)))
-                        }
-                    },
-                    errorCallback = { throwable ->
-                        renderState(SearchState.Error(getApplication<Application>().getString(R.string.connection_problem)))
-                        showToast.postValue(throwable.message ?: "Unknown error")
+            searchMusicUseCase.execute(
+                query = newSearchText,
+                callback = { result ->
+                    if (result.isNotEmpty()) {
+                        renderState(SearchState.Content(result))
+                    } else {
+                        renderState(SearchState.Empty(getApplication<Application>().getString(R.string.nothing_was_found)))
                     }
-                )
-            }
+                },
+                errorCallback = { throwable ->
+                    renderState(SearchState.Error(getApplication<Application>().getString(R.string.connection_problem)))
+                    showToast.postValue(throwable.message ?: "Unknown error")
+                }
+            )
         }
     }
 
