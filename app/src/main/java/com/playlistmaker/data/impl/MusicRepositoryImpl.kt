@@ -24,11 +24,10 @@ class MusicRepositoryImpl(
                 response: Response<ResultResponse>
             ) {
                 if (response.isSuccessful) {
-                    val tracks =
-                        response.body()?.results?.filter {
-                            it.trackName != null && (it.trackTimeMillis ?: 0) > 0
-                        }
-                            ?: emptyList()
+                    val tracks = response.body()?.results?.filter {
+                        it.trackName != null && (it.trackTimeMillis ?: 0) > 0
+                    }
+                        ?: emptyList()
                     callback(tracks)
                 } else {
                     errorCallback(Exception("Response failed"))
@@ -38,7 +37,6 @@ class MusicRepositoryImpl(
             override fun onFailure(call: Call<ResultResponse>, t: Throwable) {
                 errorCallback(t)
             }
-
         })
     }
 }
