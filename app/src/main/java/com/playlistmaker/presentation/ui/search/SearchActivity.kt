@@ -11,7 +11,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -23,9 +25,10 @@ import com.playlistmaker.domain.models.Music
 import com.playlistmaker.domain.usecase.ClearSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.GetSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.ManageSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.adapter.MusicRVAdapter
 import com.playlistmaker.presentation.ui.player.AudioPlayerActivity
+import com.playlistmaker.presentation.ui.search.viewmodel.SearchViewModel
+import com.playlistmaker.presentation.ui.viewmodel.SearchState
 
 class SearchActivity : AppCompatActivity() {
 
@@ -33,37 +36,58 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchAdapter: MusicRVAdapter
     private lateinit var historyAdapter: MusicRVAdapter
 
-    private lateinit var searchMusicUseCase: SearchMusicUseCase
+    private val viewModel: SearchViewModel by viewModels { SearchViewModel.getViewModelFactory(this.application) }
     private lateinit var manageSearchHistoryUseCase: ManageSearchHistoryUseCase
     private lateinit var getSearchHistoryUseCase: GetSearchHistoryUseCase
     private lateinit var clearSearchHistoryUseCase: ClearSearchHistoryUseCase
 
     private val handler = Handler(Looper.getMainLooper())
-    private var inputText: String = ""
     private var isClickAllowed = true
-
-    private lateinit var creator: Creator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        enableEdgeToEdge()
+
+        Creator.initialize(this)
+
+        manageSearchHistoryUseCase = Creator.provideManageSearchHistoryUseCase()
+        getSearchHistoryUseCase = Creator.provideGetSearchHistoryUseCase()
+        clearSearchHistoryUseCase = Creator.provideClearSearchHistoryUseCase()
+
+        setupWindowInsets()
+        setupViewModel()
+        setupUI()
+        updateHistory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    private fun setupWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
 
-        creator = Creator(this)
+    private fun setupViewModel() {
+        viewModel.observeState().observe(this) { state ->
+            when (state) {
+                is SearchState.Loading -> showLoading()
+                is SearchState.Content -> showContent(state.musicList)
+                is SearchState.Empty -> showEmpty(state.message)
+                is SearchState.Error -> showError(state.message)
+            }
+        }
 
-        searchMusicUseCase = creator.searchMusicUseCase
-        manageSearchHistoryUseCase = creator.manageSearchHistoryUseCase
-        getSearchHistoryUseCase = creator.getSearchHistoryUseCase
-        clearSearchHistoryUseCase = creator.clearSearchHistoryUseCase
-
-        setupUI()
-        updateHistory()
+        viewModel.observeShowToast().observe(this) { message ->
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setupUI() {
@@ -79,9 +103,11 @@ class SearchActivity : AppCompatActivity() {
         binding.rvHistory.layoutManager = LinearLayoutManager(this)
 
         val trackClickListener: (Music) -> Unit = { track ->
-            manageSearchHistoryUseCase.addTrackToHistory(track)
-            openAudioPlayer(track)
-            updateHistory()
+            if (clickDebounce()) {
+                manageSearchHistoryUseCase.addTrackToHistory(track)
+                openAudioPlayer(track)
+                updateHistory()
+            }
         }
 
         searchAdapter = MusicRVAdapter(trackClickListener)
@@ -96,30 +122,14 @@ class SearchActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    private fun searchDebounce() {
-        val query = binding.searchEditText.text.toString().trim()
-        handler.removeCallbacksAndMessages(null)
-        if (query.isNotEmpty()) {
-            handler.postDelayed({ searchMusic(query) }, SEARCH_DEBOUNCE_DELAY)
-        } else {
-            clearResults()
-        }
-    }
-
     private fun setupSearchEditText() {
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = binding.searchEditText.text.toString().trim()
-                if (query.isNotEmpty()) searchMusic(query)
+                if (query.isNotEmpty()) {
+                    viewModel.searchDebounce(query)
+                    hideKeyboard()
+                }
                 true
             } else false
         }
@@ -128,9 +138,9 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchDebounce()
-                binding.clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-                inputText = s?.toString() ?: ""
+                val query = s.toString().trim()
+                binding.clearIcon.visibility = if (query.isEmpty()) View.GONE else View.VISIBLE
+                viewModel.searchDebounce(query)
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -148,47 +158,49 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupClearHistoryButton() {
         binding.clearHistory.setOnClickListener {
-            clearSearchHistoryUseCase.execute()
-            updateHistory()
+            if (clickDebounce()) {
+                clearSearchHistoryUseCase.execute()
+                updateHistory()
+            }
         }
     }
 
-    private fun searchMusic(query: String) {
+    private fun showLoading() {
         binding.progressContainer.visibility = View.VISIBLE
         hidePlaceholder()
+        clearResults()
+    }
 
-        searchMusicUseCase.execute(
-            query,
-            { result ->
-                binding.progressContainer.visibility = View.GONE
-                if (result.isNotEmpty()) {
-                    searchAdapter.items = result
-                } else {
-                    showPlaceholder(getString(R.string.nothing_was_found), R.drawable.music_error)
-                }
-            },
-            {
-                binding.progressContainer.visibility = View.GONE
-                showPlaceholder(getString(R.string.connection_problem), R.drawable.internet_error)
-            }
-        )
+    private fun showContent(musicList: List<Music>) {
+        binding.progressContainer.visibility = View.GONE
+        hidePlaceholder()
+        searchAdapter.items = musicList
+    }
+
+    private fun showEmpty(message: String) {
+        binding.progressContainer.visibility = View.GONE
+        showPlaceholder(message, R.drawable.music_error)
+        clearResults()
+    }
+
+    private fun showError(message: String) {
+        binding.progressContainer.visibility = View.GONE
+        showPlaceholder(message, R.drawable.internet_error)
+        clearResults()
     }
 
     private fun updateHistory() {
         val history = getSearchHistoryUseCase.execute()
         historyAdapter.items = history
-
         binding.searched.visibility = if (history.isNotEmpty()) View.VISIBLE else View.GONE
         binding.clearHistory.visibility = if (history.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun openAudioPlayer(track: Music) {
-        if (clickDebounce()) {
-            val intent = Intent(this, AudioPlayerActivity::class.java).apply {
-                putExtra("track", track)
-            }
-            startActivity(intent)
+        val intent = Intent(this, AudioPlayerActivity::class.java).apply {
+            putExtra("track", track)
         }
+        startActivity(intent)
     }
 
     private fun showPlaceholder(text: String, imageRes: Int) {
@@ -208,20 +220,31 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard() {
-        val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == android.R.id.home) {
-            finish()
-            true
-        } else super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
