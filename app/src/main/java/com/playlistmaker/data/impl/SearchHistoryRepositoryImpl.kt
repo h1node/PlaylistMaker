@@ -1,6 +1,7 @@
 package com.playlistmaker.data.impl
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.playlistmaker.domain.models.Music
@@ -15,7 +16,7 @@ class SearchHistoryRepositoryImpl(
 
     override fun saveSearchHistory(trackList: List<Music>) {
         val json = gson.toJson(trackList)
-        sharedPreferences.edit().putString(key, json).apply()
+        sharedPreferences.edit() { putString(key, json) }
     }
 
     override fun getSearchHistory(): List<Music> {
@@ -25,6 +26,6 @@ class SearchHistoryRepositoryImpl(
     }
 
     override fun clearSearchHistory() {
-        sharedPreferences.edit().remove(key).apply()
+        sharedPreferences.edit() { remove(key) }
     }
 }

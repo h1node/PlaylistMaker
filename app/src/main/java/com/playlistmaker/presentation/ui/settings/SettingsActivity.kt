@@ -8,16 +8,17 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.playlistmaker.R
-import com.playlistmaker.core.App
 import com.playlistmaker.databinding.ActivitySettingsBinding
+import com.playlistmaker.domain.repositories.ThemeRepository
+import org.koin.android.ext.android.inject
 
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
+    private val themeRepository: ThemeRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,16 +26,15 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        val toolbar = findViewById<Toolbar>(R.id.setting_toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.settingToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        binding.switchButton.isChecked = (applicationContext as App).darkTheme
+        binding.switchButton.isChecked = themeRepository.darkTheme
         binding.switchButton.setOnCheckedChangeListener { _, checked ->
-            (applicationContext as App).switchTheme(checked)
+            themeRepository.darkTheme = checked
         }
+
         setupWindowInsets()
         configureEmailButton()
         configureShareButton()
