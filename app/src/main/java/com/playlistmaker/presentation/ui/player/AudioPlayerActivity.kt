@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,12 +14,14 @@ import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.presentation.ui.player.viewmodel.AudioPlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAudioPlayerBinding
-    private val viewModel: AudioPlayerViewModel by viewModels {
-        AudioPlayerViewModel.getViewModelFactory(application, intent?.getParcelableExtra("track"))
+    private val viewModel: AudioPlayerViewModel by viewModel {
+        parametersOf(intent?.getParcelableExtra("track"))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

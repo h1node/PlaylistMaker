@@ -7,8 +7,6 @@ import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.domain.models.Music
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -98,11 +96,5 @@ class AudioPlayerViewModel(
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
 
-        fun getViewModelFactory(application: Application, track: Music?) =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return AudioPlayerViewModel(application, track) as T
-                }
-            }
     }
 }

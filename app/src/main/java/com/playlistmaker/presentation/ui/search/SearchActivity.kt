@@ -13,13 +13,11 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.playlistmaker.R
-import com.playlistmaker.core.Creator
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.domain.usecase.ClearSearchHistoryUseCase
@@ -29,6 +27,8 @@ import com.playlistmaker.presentation.adapter.MusicRVAdapter
 import com.playlistmaker.presentation.ui.player.AudioPlayerActivity
 import com.playlistmaker.presentation.ui.search.viewmodel.SearchViewModel
 import com.playlistmaker.presentation.ui.viewmodel.SearchState
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -36,10 +36,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchAdapter: MusicRVAdapter
     private lateinit var historyAdapter: MusicRVAdapter
 
-    private val viewModel: SearchViewModel by viewModels { SearchViewModel.getViewModelFactory(this.application) }
-    private lateinit var manageSearchHistoryUseCase: ManageSearchHistoryUseCase
-    private lateinit var getSearchHistoryUseCase: GetSearchHistoryUseCase
-    private lateinit var clearSearchHistoryUseCase: ClearSearchHistoryUseCase
+    private val viewModel: SearchViewModel by viewModel()
+    private val manageSearchHistoryUseCase: ManageSearchHistoryUseCase by inject()
+    private val getSearchHistoryUseCase: GetSearchHistoryUseCase by inject()
+    private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase by inject()
 
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
@@ -49,12 +49,6 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
-
-        Creator.initialize(this)
-
-        manageSearchHistoryUseCase = Creator.provideManageSearchHistoryUseCase()
-        getSearchHistoryUseCase = Creator.provideGetSearchHistoryUseCase()
-        clearSearchHistoryUseCase = Creator.provideClearSearchHistoryUseCase()
 
         setupWindowInsets()
         setupViewModel()

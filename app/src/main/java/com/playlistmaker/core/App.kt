@@ -1,35 +1,26 @@
 package com.playlistmaker.core
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
+import com.playlistmaker.di.networkModule
+import com.playlistmaker.di.repositoryModule
+import com.playlistmaker.di.themeModule
+import com.playlistmaker.di.useCaseModule
+import com.playlistmaker.di.viewModelModule
+import com.playlistmaker.domain.repositories.ThemeRepository
+import org.koin.android.ext.android.get
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 
 class App : Application() {
-    var darkTheme = false
 
     override fun onCreate() {
         super.onCreate()
 
-        val sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        darkTheme = sharedPreferences.getBoolean(THEME_SWITCHER, false)
-
-        switchTheme(darkTheme)
-    }
-
-    fun switchTheme(darkEnabled: Boolean) {
-        darkTheme = darkEnabled
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkEnabled) AppCompatDelegate.MODE_NIGHT_YES
-            else AppCompatDelegate.MODE_NIGHT_NO
-        )
-
-        val editor = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE).edit()
-        editor.putBoolean(THEME_SWITCHER, darkEnabled)
-        editor.apply()
-    }
-
-    companion object {
-        const val THEME_SWITCHER = "THEME_SWITCHER"
-        const val SHARED_PREFS = "SHARED_PREFS"
+        startKoin {
+            androidContext(this@App)
+            modules(networkModule, repositoryModule, useCaseModule, themeModule, viewModelModule)
+        }
+        get<ThemeRepository>().darkTheme = get<ThemeRepository>().darkTheme
     }
 }
