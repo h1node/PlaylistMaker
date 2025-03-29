@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.koin.android)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
     implementation(libs.gson)
