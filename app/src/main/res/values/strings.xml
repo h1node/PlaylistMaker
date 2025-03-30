@@ -31,5 +31,12 @@
     <string name="album">Альбом:</string>
     <string name="duration">Длительность:</string>
 
+    <!--    MediaLibrary-->
+    <string name="favorites_tracks">Избранные треки</string>
+    <string name="playlist">Плейлисты</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="playlist_text">Вы не создали ни одного плейлиста</string>
+    <string name="empty_media_text">Ваша медиатека пуста</string>
+
 
 </resources>

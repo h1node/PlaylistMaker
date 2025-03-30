@@ -21,4 +21,9 @@
     <string name="release_date">Released:</string>
     <string name="album">Album:</string>
     <string name="duration">Duration:</string>
+    <string name="favorites_tracks">Favorite tracks</string>
+    <string name="playlist">Playlists</string>
+    <string name="new_playlist">New playlist</string>
+    <string name="playlist_text">You haven\'t created any playlists</string>
+    <string name="empty_media_text">Your library is empty</string>
 </resources>
