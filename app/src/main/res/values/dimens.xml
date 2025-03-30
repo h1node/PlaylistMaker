@@ -24,6 +24,7 @@
 
     <dimen name="item_radius">10dp</dimen>
     <dimen name="padding_8dp">8dp</dimen>
+    <dimen name="padding_16dp">16dp</dimen>
     <dimen name="marginHorizontal_24dp">24dp</dimen>
     <dimen name="textSizePlaceHolder_25sp">25sp</dimen>
     <dimen name="music_item_13sp">13sp</dimen>
@@ -31,6 +32,8 @@
     <dimen name="YS_medium_19sp">19sp</dimen>
 
     <dimen name="textSize_14">14sp</dimen>
+    <dimen name="fragment_placeholder_116">116dp</dimen>
+    <dimen name="fragment_playlist_placeholder_46dp">46dp</dimen>
 </resources>
 
 

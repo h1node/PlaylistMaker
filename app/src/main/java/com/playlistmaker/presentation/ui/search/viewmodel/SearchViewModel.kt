@@ -51,24 +51,29 @@ class SearchViewModel(
     }
 
     private fun searchRequest(newSearchText: String) {
-        if (newSearchText.isNotEmpty()) {
-            renderState(SearchState.Loading)
-
-            searchMusicUseCase.execute(
-                query = newSearchText,
-                callback = { result ->
-                    if (result.isNotEmpty()) {
-                        renderState(SearchState.Content(result))
-                    } else {
-                        renderState(SearchState.Empty(getApplication<Application>().getString(R.string.nothing_was_found)))
-                    }
-                },
-                errorCallback = { throwable ->
-                    renderState(SearchState.Error(getApplication<Application>().getString(R.string.connection_problem)))
-                    showToast.postValue(throwable.message ?: "Unknown error")
-                }
-            )
+        if (newSearchText != latestSearchText || newSearchText.isEmpty()) {
+            return
         }
+        renderState(SearchState.Loading)
+
+        searchMusicUseCase.execute(
+            query = newSearchText,
+            callback = { result ->
+                if (newSearchText != latestSearchText) return@execute
+
+                if (result.isNotEmpty()) {
+                    renderState(SearchState.Content(result))
+                } else {
+                    renderState(SearchState.Empty(getApplication<Application>().getString(R.string.nothing_was_found)))
+                }
+            },
+            errorCallback = { throwable ->
+                if (newSearchText != latestSearchText) return@execute
+
+                renderState(SearchState.Error(getApplication<Application>().getString(R.string.connection_problem)))
+                showToast.postValue(throwable.message ?: "Unknown error")
+            }
+        )
     }
 
     private fun renderState(state: SearchState) {

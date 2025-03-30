@@ -15,6 +15,25 @@
         <item name="iconTint">@color/YP_Black</item>
     </style>
 
+    <style name="playlist_btn">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/colorLightNight</item>
+        <item name="android:textColor">@color/music_item_color</item>
+        <item name="textAllCaps">false</item>
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="cornerRadius">54dp</item>
+    </style>
+
+    <style name="TabLayout" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="tabTextColor">@color/colorLightNight</item>
+        <item name="tabIndicatorColor">@color/colorLightNight</item>
+        <item name="android:textSize">@dimen/textSize_14</item>
+    </style>
+
     <style name="SettingText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/settings_activity_frame</item>
