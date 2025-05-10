@@ -108,6 +108,8 @@ class SearchFragment : Fragment() {
         setupSearchEditText()
         setupClearIcon()
         setupClearHistoryButton()
+        binding.rvHistory.visibility = View.VISIBLE
+        binding.rvSearch.visibility = View.GONE
     }
 
     private fun showLoading() {
@@ -199,11 +201,26 @@ class SearchFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString().trim()
                 binding.clearIcon.visibility = if (query.isEmpty()) View.GONE else View.VISIBLE
-                viewModel.searchDebounce(query)
+
+                if (query.isEmpty()) {
+                    showHistory()
+                } else {
+                    binding.rvHistory.visibility = View.GONE
+                    binding.rvSearch.visibility = View.VISIBLE
+                    viewModel.searchDebounce(query)
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    private fun showHistory() {
+        clearResults()
+        updateHistory()
+        binding.rvHistory.visibility = View.VISIBLE
+        binding.rvSearch.visibility = View.GONE
+        hidePlaceholder()
     }
 
     private fun setupClearIcon() {
@@ -211,7 +228,7 @@ class SearchFragment : Fragment() {
             binding.searchEditText.setText("")
             it.visibility = View.GONE
             hideKeyboard()
-            clearResults()
+            showHistory()
         }
     }
 

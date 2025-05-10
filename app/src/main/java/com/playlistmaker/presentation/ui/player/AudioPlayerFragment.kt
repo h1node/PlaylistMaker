@@ -3,11 +3,11 @@ package com.playlistmaker.presentation.ui.player
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentAudioPlayerBinding
@@ -46,29 +46,44 @@ class AudioPlayerFragment : Fragment() {
         _binding = null
     }
 
-
     private fun setupToolbar() {
         val activity = requireActivity()
         if (activity is AppCompatActivity) {
             activity.setSupportActionBar(binding.toolbar)
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+            binding.toolbar.setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
         }
     }
 
+    companion object {
+        const val TRACK_KEY = "track"
+        const val YEAR_FORMAT = "yyyy"
+        const val DEFAULT_TRACK_TIME = "00:00"
+    }
+
     private fun displayTrackDetails() {
-        arguments
-        val track = requireArguments().getParcelable<Music>("track") ?: return
+        val track = requireArguments().getParcelable<Music>(TRACK_KEY) ?: return
+
         with(binding) {
             songTitle.text = track.trackName
             artistName.text = track.artistName
             releaseDate.text = track.releaseDate?.let {
-                SimpleDateFormat("yyyy", Locale.getDefault()).format(it)
+                SimpleDateFormat(YEAR_FORMAT, Locale.getDefault()).format(it)
             } ?: ""
+
             country.text = track.country
-            collectionName.text = track.collectionName
-            collectionName.visibility = getVisibility(track.collectionName)
+
+            collectionName.apply {
+                text = track.collectionName
+                visibility = getVisibility(track.collectionName)
+            }
+
             primaryGenreName.text = track.primaryGenreName
-            trackTimeMills.text = track.trackTimeMillis?.let { formatTrackTime(it) } ?: "00:00"
+            trackTimeMills.text =
+                track.trackTimeMillis?.let { formatTrackTime(it) } ?: DEFAULT_TRACK_TIME
 
             Glide.with(image)
                 .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
@@ -125,13 +140,5 @@ class AudioPlayerFragment : Fragment() {
         if (viewModel.observePlayerState().value == AudioPlayerViewModel.STATE_PLAYING) {
             viewModel.playbackControl()
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            requireActivity()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 }
