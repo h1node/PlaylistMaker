@@ -1,35 +1,42 @@
 package com.playlistmaker.presentation.ui.media
 
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.playlistmaker.R
-import com.playlistmaker.databinding.ActivityMediaLibraryBinding
+import com.playlistmaker.databinding.FragmentMediaLibraryBinding
 
 
-class MediaLibrary : AppCompatActivity() {
-    private lateinit var binding: ActivityMediaLibraryBinding
+class MediaLibrary : Fragment() {
+    private var _binding: FragmentMediaLibraryBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var tabLayoutMediator: TabLayoutMediator
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityMediaLibraryBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setupWindowInsets()
-        setSupportActionBar(binding.mediaToolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentMediaLibraryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setUpViewPager()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        tabLayoutMediator.detach()
+        _binding = null
+    }
+
     private fun setUpViewPager() {
-        binding.viewPager.adapter = MediaViewPagerAdapter(supportFragmentManager, lifecycle)
+        binding.viewPager.adapter = MediaViewPagerAdapter(childFragmentManager, lifecycle)
         tabLayoutMediator =
             TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                 when (position) {
@@ -38,23 +45,5 @@ class MediaLibrary : AppCompatActivity() {
                 }
             }
         tabLayoutMediator.attach()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        tabLayoutMediator.detach()
-    }
-
-    private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) finish()
-        return true
     }
 }
