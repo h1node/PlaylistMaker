@@ -1,15 +1,16 @@
 package com.playlistmaker.presentation.ui.main
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivityMainBinding
-import com.playlistmaker.presentation.ui.media.MediaLibrary
-import com.playlistmaker.presentation.ui.search.SearchActivity
-import com.playlistmaker.presentation.ui.settings.SettingsActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,26 +21,20 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-
-        binding.settingButton.setOnClickListener {
-            val settingDisplay = Intent(this, SettingsActivity::class.java)
-            startActivity(settingDisplay)
-        }
-
-        binding.mediaLibraryButton.setOnClickListener {
-            val mediaLibraryDisplay = Intent(this, MediaLibrary::class.java)
-            startActivity(mediaLibraryDisplay)
-        }
-
-        binding.searchButton.setOnClickListener {
-            val searchDisplay = Intent(this, SearchActivity::class.java)
-            startActivity(searchDisplay)
-        }
-
         setupWindowInsets()
 
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.bottomNavigationView.visibility =
+                if (destination.id == R.id.audioPlayerFragment) View.GONE else View.VISIBLE
+        }
+
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setupWithNavController(navController)
     }
 
     private fun setupWindowInsets() {
