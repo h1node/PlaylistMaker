@@ -1,57 +1,63 @@
 package com.playlistmaker.presentation.ui.player
 
-
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.enableEdgeToEdge
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.playlistmaker.R
-import com.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.presentation.ui.player.viewmodel.AudioPlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.util.Locale
 
-class AudioPlayerActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAudioPlayerBinding
+
+class AudioPlayerFragment : Fragment() {
+    private var _binding: FragmentAudioPlayerBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: AudioPlayerViewModel by viewModel {
-        parametersOf(intent?.getParcelableExtra("track"))
+        parametersOf(requireArguments().getParcelable<Music>("track"))
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        setupWindowInsets()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupToolbar()
         displayTrackDetails()
         observeViewModel()
         setupControls()
     }
 
-    private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
+    private fun setupToolbar() {
+        val activity = requireActivity()
+        if (activity is AppCompatActivity) {
+            activity.setSupportActionBar(binding.toolbar)
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
     }
 
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
     private fun displayTrackDetails() {
-        val track = intent?.getParcelableExtra<Music>("track") ?: return
+        arguments
+        val track = requireArguments().getParcelable<Music>("track") ?: return
         with(binding) {
             songTitle.text = track.trackName
             artistName.text = track.artistName
@@ -80,12 +86,12 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.observePlayerState().observe(this) { state ->
+        viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
             binding.play.isEnabled = state != AudioPlayerViewModel.STATE_DEFAULT
             updateButtonVisibility(state)
         }
 
-        viewModel.observeProgress().observe(this) { progress ->
+        viewModel.observeProgress().observe(viewLifecycleOwner) { progress ->
             binding.trackProgress.text = progress
         }
     }
@@ -123,7 +129,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            finish()
+            requireActivity()
             return true
         }
         return super.onOptionsItemSelected(item)
