@@ -11,6 +11,7 @@ import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.ui.viewmodel.SearchState
 import com.playlistmaker.presentation.ui.viewmodel.SingleLiveEvent
 
+
 class SearchViewModel(
     application: Application,
     private val searchMusicUseCase: SearchMusicUseCase
@@ -19,7 +20,6 @@ class SearchViewModel(
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
     }
 
     private val handler = Handler(Looper.getMainLooper())
