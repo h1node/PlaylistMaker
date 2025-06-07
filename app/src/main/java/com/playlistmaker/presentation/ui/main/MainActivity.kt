@@ -37,6 +37,10 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
     }
 
+    fun animateBottomNavigationView() {
+        binding.bottomNavigationView.visibility = View.GONE
+    }
+
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

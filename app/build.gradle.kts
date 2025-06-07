@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.koin.android)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
