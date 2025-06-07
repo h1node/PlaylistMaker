@@ -13,6 +13,7 @@ import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.presentation.ui.player.viewmodel.AudioPlayerViewModel
+import com.playlistmaker.presentation.ui.player.viewmodel.PlayerState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.util.Locale
@@ -23,7 +24,7 @@ class AudioPlayerFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: AudioPlayerViewModel by viewModel {
-        parametersOf(requireArguments().getParcelable<Music>("track"))
+        parametersOf(requireArguments().getParcelable<Music>(TRACK_KEY))
     }
 
     override fun onCreateView(
@@ -56,12 +57,6 @@ class AudioPlayerFragment : Fragment() {
                 findNavController().navigateUp()
             }
         }
-    }
-
-    companion object {
-        const val TRACK_KEY = "track"
-        const val YEAR_FORMAT = "yyyy"
-        const val DEFAULT_TRACK_TIME = "00:00"
     }
 
     private fun displayTrackDetails() {
@@ -102,43 +97,37 @@ class AudioPlayerFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
-            binding.play.isEnabled = state != AudioPlayerViewModel.STATE_DEFAULT
-            updateButtonVisibility(state)
-        }
-
-        viewModel.observeProgress().observe(viewLifecycleOwner) { progress ->
-            binding.trackProgress.text = progress
+            updatePlayPauseButton(state)
+            binding.trackProgress.text = state.progress
         }
     }
 
-    private fun updateButtonVisibility(state: Int) {
-        when (state) {
-            AudioPlayerViewModel.STATE_PLAYING -> {
-                binding.play.visibility = View.GONE
-                binding.pause.visibility = View.VISIBLE
-            }
-
-            AudioPlayerViewModel.STATE_PAUSED, AudioPlayerViewModel.STATE_PREPARED -> {
-                binding.play.visibility = View.VISIBLE
-                binding.pause.visibility = View.GONE
-            }
-
-            else -> {
-                binding.play.visibility = View.VISIBLE
-                binding.pause.visibility = View.GONE
-            }
+    private fun updatePlayPauseButton(state: PlayerState) {
+        val iconRes = when (state) {
+            is PlayerState.Playing -> R.drawable.pause
+            else -> R.drawable.play
         }
+        binding.playPauseButton.setImageResource(iconRes)
+        binding.playPauseButton.isEnabled = state.isPlayButtonEnabled
     }
 
     private fun setupControls() {
-        binding.play.setOnClickListener { viewModel.playbackControl() }
-        binding.pause.setOnClickListener { viewModel.playbackControl() }
+        binding.playPauseButton.setOnClickListener {
+            viewModel.playbackControl()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        if (viewModel.observePlayerState().value == AudioPlayerViewModel.STATE_PLAYING) {
+        val currentState = viewModel.observePlayerState().value
+        if (currentState is PlayerState.Playing) {
             viewModel.playbackControl()
         }
+    }
+
+    companion object {
+        const val TRACK_KEY = "track"
+        const val YEAR_FORMAT = "yyyy"
+        const val DEFAULT_TRACK_TIME = "00:00"
     }
 }

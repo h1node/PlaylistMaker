@@ -3,6 +3,7 @@ package com.playlistmaker.domain.usecase
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.domain.repositories.SearchHistoryRepository
 
+
 class ManageSearchHistoryUseCase(private val repository: SearchHistoryRepository) {
     fun addTrackToHistory(track: Music) {
         val history = repository.getSearchHistory().toMutableList()

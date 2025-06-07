@@ -11,5 +11,4 @@ val viewModelModule = module {
         AudioPlayerViewModel(get(), track)
     }
     viewModel { SearchViewModel(get(), get()) }
-
 }

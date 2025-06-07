@@ -2,13 +2,11 @@ package com.playlistmaker.domain.usecase
 
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.domain.repositories.MusicSearchRepository
+import kotlinx.coroutines.flow.Flow
+
 
 class SearchMusicUseCase(private val repository: MusicSearchRepository) {
-    fun execute(
-        query: String,
-        callback: (List<Music>) -> Unit,
-        errorCallback: (Throwable) -> Unit
-    ) {
-        repository.searchMusic(query, callback, errorCallback)
+    suspend fun execute(query: String): Flow<List<Music>> {
+        return repository.searchMusic(query)
     }
 }

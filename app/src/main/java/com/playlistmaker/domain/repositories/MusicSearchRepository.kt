@@ -1,12 +1,9 @@
 package com.playlistmaker.domain.repositories
 
 import com.playlistmaker.domain.models.Music
+import kotlinx.coroutines.flow.Flow
 
 
 interface MusicSearchRepository {
-    fun searchMusic(
-        query: String,
-        callback: (List<Music>) -> Unit,
-        errorCallback: (Throwable) -> Unit
-    )
+    suspend fun searchMusic(query: String): Flow<List<Music>>
 }
