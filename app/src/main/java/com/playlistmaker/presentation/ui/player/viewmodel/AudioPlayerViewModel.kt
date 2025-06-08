@@ -2,14 +2,16 @@ package com.playlistmaker.presentation.ui.player.viewmodel
 
 import android.app.Application
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.playlistmaker.domain.models.Music
-import java.text.SimpleDateFormat
-import java.util.Locale
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+
 
 class AudioPlayerViewModel(
     application: Application,
@@ -17,27 +19,10 @@ class AudioPlayerViewModel(
 ) : AndroidViewModel(application) {
 
     private var mediaPlayer: MediaPlayer? = null
-    private val handler = Handler(Looper.getMainLooper())
+    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
+    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
-    private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
-    fun observePlayerState(): LiveData<Int> = playerStateLiveData
-
-    private val progressLiveData = MutableLiveData("00:00")
-    fun observeProgress(): LiveData<String> = progressLiveData
-
-    private val progressTask = object : Runnable {
-        override fun run() {
-            mediaPlayer?.let { player ->
-                if (player.isPlaying) {
-                    val currentPosition = player.currentPosition
-                    progressLiveData.postValue(
-                        SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
-                    )
-                    handler.postDelayed(this, 500)
-                }
-            }
-        }
-    }
+    private var progressJob: Job? = null
 
     init {
         preparePlayer()
@@ -50,13 +35,12 @@ class AudioPlayerViewModel(
                 setDataSource(previewUrl)
                 prepareAsync()
                 setOnPreparedListener {
-                    playerStateLiveData.postValue(STATE_PREPARED)
-                    handler.post(progressTask)
+                    playerStateLiveData.postValue(PlayerState.Prepared())
                 }
                 setOnCompletionListener {
-                    playerStateLiveData.postValue(STATE_PREPARED)
-                    handler.removeCallbacks(progressTask)
-                    progressLiveData.postValue("00:00")
+                    stopProgressUpdates()
+                    mediaPlayer?.seekTo(0)
+                    playerStateLiveData.postValue(PlayerState.Prepared())
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -66,35 +50,65 @@ class AudioPlayerViewModel(
 
     fun playbackControl() {
         when (playerStateLiveData.value) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PREPARED, STATE_PAUSED -> startPlayer()
+            is PlayerState.Playing -> pausePlayer()
+            is PlayerState.Prepared, is PlayerState.Paused -> startPlayer()
+            else -> Unit
         }
     }
 
     private fun startPlayer() {
         mediaPlayer?.start()
-        playerStateLiveData.postValue(STATE_PLAYING)
-        handler.post(progressTask)
+        startProgressUpdates()
+        playerStateLiveData.postValue(
+            PlayerState.Playing(
+                formatProgress(
+                    mediaPlayer?.currentPosition ?: 0
+                )
+            )
+        )
     }
 
     private fun pausePlayer() {
         mediaPlayer?.pause()
-        playerStateLiveData.postValue(STATE_PAUSED)
-        handler.removeCallbacks(progressTask)
+        stopProgressUpdates()
+        playerStateLiveData.postValue(
+            PlayerState.Paused(
+                formatProgress(
+                    mediaPlayer?.currentPosition ?: 0
+                )
+            )
+        )
+    }
+
+    private fun startProgressUpdates() {
+        stopProgressUpdates()
+        progressJob = viewModelScope.launch {
+            while (isActive) {
+                delay(300)
+                val position = mediaPlayer?.currentPosition ?: 0
+                val formattedProgress = formatProgress(position)
+                playerStateLiveData.postValue(
+                    PlayerState.Playing(formattedProgress)
+                )
+            }
+        }
+    }
+
+    private fun stopProgressUpdates() {
+        progressJob?.cancel()
+        progressJob = null
+    }
+
+    private fun formatProgress(millis: Int): String {
+        val seconds = (millis / 1000) % 60
+        val minutes = (millis / 1000) / 60
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     override fun onCleared() {
         super.onCleared()
-        handler.removeCallbacks(progressTask)
+        stopProgressUpdates()
         mediaPlayer?.release()
         mediaPlayer = null
-    }
-
-    companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-
     }
 }

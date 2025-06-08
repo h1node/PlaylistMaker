@@ -2,8 +2,6 @@ package com.playlistmaker.presentation.ui.search
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.playlistmaker.R
@@ -22,8 +21,12 @@ import com.playlistmaker.domain.usecase.ClearSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.GetSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.ManageSearchHistoryUseCase
 import com.playlistmaker.presentation.adapter.MusicRVAdapter
+import com.playlistmaker.presentation.ui.main.MainActivity
 import com.playlistmaker.presentation.ui.search.viewmodel.SearchViewModel
 import com.playlistmaker.presentation.ui.viewmodel.SearchState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -41,8 +44,7 @@ class SearchFragment : Fragment() {
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase by inject()
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase by inject()
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var isClickAllowed = true
+    private var clickJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -54,6 +56,16 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        searchAdapter = MusicRVAdapter { track ->
+            (activity as MainActivity).animateBottomNavigationView()
+            clickDebounce()
+        }
+
+        historyAdapter = MusicRVAdapter { track ->
+            (activity as MainActivity).animateBottomNavigationView()
+            clickDebounce()
+        }
+
         setupViewModel()
         setupUI()
         updateHistory()
@@ -64,18 +76,13 @@ class SearchFragment : Fragment() {
         super.onDestroyView()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
-    }
-
     private fun setupViewModel() {
         viewModel.observeState().observe(viewLifecycleOwner) { state ->
             when (state) {
-                is SearchState.Loading -> showLoading()
+                SearchState.Loading -> showLoading()
                 is SearchState.Content -> showContent(state.musicList)
-                is SearchState.Empty -> showEmpty(state.message)
-                is SearchState.Error -> showError(state.message)
+                is SearchState.Empty -> showEmpty(getString(state.messageId))
+                is SearchState.Error -> showError(getString(state.messageId))
             }
         }
 
@@ -171,12 +178,13 @@ class SearchFragment : Fragment() {
     }
 
     private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        val isAllowed = clickJob == null || clickJob?.isCompleted == true
+        if (isAllowed) {
+            clickJob = viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+            }
         }
-        return current
+        return isAllowed
     }
 
     companion object {

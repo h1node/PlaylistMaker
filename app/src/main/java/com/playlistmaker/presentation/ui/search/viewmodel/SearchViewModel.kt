@@ -1,82 +1,70 @@
 package com.playlistmaker.presentation.ui.search.viewmodel
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.playlistmaker.R
+import com.playlistmaker.domain.models.Music
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.ui.viewmodel.SearchState
 import com.playlistmaker.presentation.ui.viewmodel.SingleLiveEvent
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 
 
 class SearchViewModel(
     application: Application,
     private val searchMusicUseCase: SearchMusicUseCase
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
-    }
-
-    private val handler = Handler(Looper.getMainLooper())
-
-    private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
+    private val _searchQuery = MutableStateFlow("")
+    private val _state = MutableLiveData<SearchState>()
+    fun observeState(): LiveData<SearchState> = _state
 
     private val showToast = SingleLiveEvent<String>()
     fun observeShowToast(): LiveData<String> = showToast
 
-    private var latestSearchText: String? = null
-
-    override fun onCleared() {
-        super.onCleared()
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
-
-    fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
-            return
-        }
-
-        latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
-    private fun searchRequest(newSearchText: String) {
-        if (newSearchText != latestSearchText || newSearchText.isEmpty()) {
-            return
-        }
-        renderState(SearchState.Loading)
-
-        searchMusicUseCase.execute(
-            query = newSearchText,
-            callback = { result ->
-                if (newSearchText != latestSearchText) return@execute
-
-                if (result.isNotEmpty()) {
-                    renderState(SearchState.Content(result))
-                } else {
-                    renderState(SearchState.Empty(getApplication<Application>().getString(R.string.nothing_was_found)))
+    init {
+        viewModelScope.launch {
+            _searchQuery
+                .debounce(SEARCH_DEBOUNCE_DELAY)
+                .filter { it.isNotBlank() }
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    searchMusicUseCase.execute(query)
+                        .map<List<Music>, SearchState> { result ->
+                            if (result.isEmpty()) {
+                                SearchState.Empty(R.string.nothing_was_found)
+                            } else {
+                                SearchState.Content(result)
+                            }
+                        }
+                        .onStart { emit(SearchState.Loading) }
+                        .catch { e ->
+                            emit(SearchState.Error(R.string.connection_problem))
+                            showToast.postValue(e.message ?: "Unknown error")
+                        }
                 }
-            },
-            errorCallback = { throwable ->
-                if (newSearchText != latestSearchText) return@execute
-
-                renderState(SearchState.Error(getApplication<Application>().getString(R.string.connection_problem)))
-                showToast.postValue(throwable.message ?: "Unknown error")
-            }
-        )
+                .collect { state ->
+                    _state.postValue(state)
+                }
+        }
     }
 
-    private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
+    fun searchDebounce(newText: String) {
+        _searchQuery.value = newText
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }
