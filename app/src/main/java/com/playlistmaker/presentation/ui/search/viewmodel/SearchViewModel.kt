@@ -1,9 +1,9 @@
 package com.playlistmaker.presentation.ui.search.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.playlistmaker.R
 import com.playlistmaker.domain.models.Music
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 class SearchViewModel(
     application: Application,
     private val searchMusicUseCase: SearchMusicUseCase
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     private val _state = MutableLiveData<SearchState>()
@@ -43,18 +43,14 @@ class SearchViewModel(
                     searchMusicUseCase.execute(query)
                         .map<List<Music>, SearchState> { result ->
                             if (result.isEmpty()) {
-                                SearchState.Empty(getApplication<Application>().getString(R.string.nothing_was_found))
+                                SearchState.Empty(R.string.nothing_was_found)
                             } else {
                                 SearchState.Content(result)
                             }
                         }
                         .onStart { emit(SearchState.Loading) }
                         .catch { e ->
-                            emit(
-                                SearchState.Error(
-                                    getApplication<Application>().getString(R.string.connection_problem)
-                                )
-                            )
+                            emit(SearchState.Error(R.string.connection_problem))
                             showToast.postValue(e.message ?: "Unknown error")
                         }
                 }

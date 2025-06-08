@@ -79,10 +79,10 @@ class SearchFragment : Fragment() {
     private fun setupViewModel() {
         viewModel.observeState().observe(viewLifecycleOwner) { state ->
             when (state) {
-                is SearchState.Loading -> showLoading()
+                SearchState.Loading -> showLoading()
                 is SearchState.Content -> showContent(state.musicList)
-                is SearchState.Empty -> showEmpty(state.message)
-                is SearchState.Error -> showError(state.message)
+                is SearchState.Empty -> showEmpty(getString(state.messageId))
+                is SearchState.Error -> showError(getString(state.messageId))
             }
         }
 
