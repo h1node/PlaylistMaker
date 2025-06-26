@@ -1,6 +1,7 @@
 package com.playlistmaker.core
 
 import android.app.Application
+import com.playlistmaker.di.dataModule
 import com.playlistmaker.di.networkModule
 import com.playlistmaker.di.repositoryModule
 import com.playlistmaker.di.themeModule
@@ -19,7 +20,14 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(networkModule, repositoryModule, useCaseModule, themeModule, viewModelModule)
+            modules(
+                networkModule,
+                repositoryModule,
+                useCaseModule,
+                themeModule,
+                viewModelModule,
+                dataModule
+            )
         }
         get<ThemeRepository>().darkTheme = get<ThemeRepository>().darkTheme
     }
