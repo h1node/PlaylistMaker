@@ -1,14 +1,12 @@
 package com.playlistmaker.data.impl
 
-import com.playlistmaker.data.db.AppDatabase
+import com.playlistmaker.data.db.dao.MusicDao
 import com.playlistmaker.data.db.entity.MusicEntity
 import com.playlistmaker.domain.repositories.FavoritesRepository
 import kotlinx.coroutines.flow.Flow
 
 
-class FavoritesRepositoryImpl(private val database: AppDatabase) : FavoritesRepository {
-
-    private val musicDao = database.musicDao()
+class FavoritesRepositoryImpl(private val musicDao: MusicDao) : FavoritesRepository {
 
     override suspend fun addToFavorites(track: MusicEntity) {
         musicDao.addToFavorites(track)

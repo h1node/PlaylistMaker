@@ -51,7 +51,7 @@ class FavoritesTrackFragment : Fragment() {
         adapter = FavoritesAdapter { trackEntity ->
             val music = trackEntity.toMusic()
             val bundle = Bundle().apply {
-                putParcelable("track", music)
+                putParcelable(KEY_TRACK, music)
             }
             findNavController().navigate(
                 R.id.audioPlayerFragment,
@@ -102,6 +102,7 @@ class FavoritesTrackFragment : Fragment() {
     }
 
     companion object {
+        const val KEY_TRACK = "track"
         fun newInstance() = FavoritesTrackFragment()
     }
 }
