@@ -5,37 +5,60 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/mediaLibrary">
 
+    <!-- Медиа-библиотека с ViewPager (Favorites и Playlist) -->
     <fragment
         android:id="@+id/mediaLibrary"
         android:name="com.playlistmaker.presentation.ui.media.MediaLibrary"
-        android:label="fragment_media_library"
+        android:label="MediaLibrary"
         tools:layout="@layout/fragment_media_library" />
 
+    <!-- Поиск музыки -->
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.playlistmaker.presentation.ui.search.SearchFragment"
-        android:label="fragment_search"
+        android:label="Search"
         tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_audioPlayerFragment"
-            app:destination="@id/audioPlayerFragment" />
+            app:destination="@id/audioPlayerFragment">
+            <argument
+                android:name="track"
+                app:argType="com.playlistmaker.domain.models.Music" />
+        </action>
     </fragment>
 
+    <!-- Настройки приложения -->
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.playlistmaker.presentation.ui.settings.SettingsFragment"
-        android:label="fragment_settings"
+        android:label="Settings"
         tools:layout="@layout/fragment_settings" />
 
+    <!-- Аудио-плеер -->
     <fragment
         android:id="@+id/audioPlayerFragment"
         android:name="com.playlistmaker.presentation.ui.player.AudioPlayerFragment"
-        android:label="fragment_audio_player"
+        android:label="AudioPlayer"
         tools:layout="@layout/fragment_audio_player">
-
         <argument
             android:name="track"
-            app:argType="com.playlistmaker.domain.models.Music"
-            app:nullable="true" />
+            app:argType="com.playlistmaker.domain.models.Music" />
     </fragment>
+
+    <!-- Экран избранного -->
+    <fragment
+        android:id="@+id/favoritesTrackFragment"
+        android:name="com.playlistmaker.presentation.ui.media.fragments.FavoritesTrackFragment"
+        android:label="Favorites"
+        tools:layout="@layout/fragment_favorites_track">
+
+        <action
+            android:id="@+id/action_favoritesTrackFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment">
+            <argument
+                android:name="track"
+                app:argType="com.playlistmaker.domain.models.Music" />
+        </action>
+    </fragment>
+
 </navigation>

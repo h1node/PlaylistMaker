@@ -144,14 +144,17 @@ class SearchFragment : Fragment() {
     }
 
     private fun updateHistory() {
-        val history = getSearchHistoryUseCase.execute()
-        historyAdapter.items = history
-        binding.searched.visibility = if (history.isNotEmpty()) View.VISIBLE else View.GONE
-        binding.clearHistory.visibility = if (history.isNotEmpty()) View.VISIBLE else View.GONE
+        viewLifecycleOwner.lifecycleScope.launch {
+            val history = getSearchHistoryUseCase.execute()
+            historyAdapter.items = history
+            binding.searched.visibility = if (history.isNotEmpty()) View.VISIBLE else View.GONE
+            binding.clearHistory.visibility = if (history.isNotEmpty()) View.VISIBLE else View.GONE
+        }
     }
 
     private fun openAudioPlayer(track: Music) {
-        val action = SearchFragmentDirections.actionSearchFragmentToAudioPlayerFragment(track)
+        val action = SearchFragmentDirections
+            .actionSearchFragmentToAudioPlayerFragment(track)
         findNavController().navigate(action)
     }
 

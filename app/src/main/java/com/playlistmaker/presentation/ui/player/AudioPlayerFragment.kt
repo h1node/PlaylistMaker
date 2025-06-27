@@ -23,13 +23,23 @@ class AudioPlayerFragment : Fragment() {
     private var _binding: FragmentAudioPlayerBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var track: Music
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        track = requireArguments().getParcelable<Music>(TRACK_KEY)
+            ?: throw IllegalStateException("Track must be passed in arguments")
+    }
+
     private val viewModel: AudioPlayerViewModel by viewModel {
-        parametersOf(requireArguments().getParcelable<Music>(TRACK_KEY))
+        parametersOf(track)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -52,7 +62,6 @@ class AudioPlayerFragment : Fragment() {
         if (activity is AppCompatActivity) {
             activity.setSupportActionBar(binding.toolbar)
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
             binding.toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
@@ -100,34 +109,37 @@ class AudioPlayerFragment : Fragment() {
             updatePlayPauseButton(state)
             binding.trackProgress.text = state.progress
         }
+
+        viewModel.isFavoriteLiveData.observe(viewLifecycleOwner) { isFavorite ->
+            if (track.trackId == viewModel.currentTrackId) {
+                binding.favoriteButton.setImageResource(
+                    if (isFavorite) R.drawable.fab_like else R.drawable.fab_favorite
+                )
+            }
+        }
     }
 
     private fun updatePlayPauseButton(state: PlayerState) {
-        val iconRes = when (state) {
-            is PlayerState.Playing -> R.drawable.pause
-            else -> R.drawable.play
-        }
+        val iconRes = if (state is PlayerState.Playing) R.drawable.pause else R.drawable.play
         binding.playPauseButton.setImageResource(iconRes)
         binding.playPauseButton.isEnabled = state.isPlayButtonEnabled
     }
 
     private fun setupControls() {
-        binding.playPauseButton.setOnClickListener {
-            viewModel.playbackControl()
-        }
+        binding.playPauseButton.setOnClickListener { viewModel.playbackControl() }
+        binding.favoriteButton.setOnClickListener { viewModel.onFavoriteClicked() }
     }
 
     override fun onPause() {
         super.onPause()
-        val currentState = viewModel.observePlayerState().value
-        if (currentState is PlayerState.Playing) {
-            viewModel.playbackControl()
-        }
+        viewModel.observePlayerState().value
+            ?.takeIf { it is PlayerState.Playing }
+            ?.let { viewModel.playbackControl() }
     }
 
     companion object {
-        const val TRACK_KEY = "track"
-        const val YEAR_FORMAT = "yyyy"
-        const val DEFAULT_TRACK_TIME = "00:00"
+        private const val TRACK_KEY = "track"
+        private const val YEAR_FORMAT = "yyyy"
+        private const val DEFAULT_TRACK_TIME = "00:00"
     }
 }
