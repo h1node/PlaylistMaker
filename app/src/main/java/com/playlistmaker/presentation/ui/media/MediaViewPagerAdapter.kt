@@ -18,7 +18,7 @@ class MediaViewPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> FavoritesTrackFragment.newInstance((position + 1).toString())
+            0 -> FavoritesTrackFragment.newInstance()
             else -> PlayListFragment.newInstance((position + 1).toString())
 
         }
