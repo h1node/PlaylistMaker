@@ -37,6 +37,16 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="playlist_text">Вы не создали ни одного плейлиста</string>
     <string name="empty_media_text">Ваша медиатека пуста</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="playlist_name">Название*</string>
+    <string name="playlist_description">Описание</string>
+    <string name="create">Создать</string>
 
+    <!--    AlertDialog-->
+    <string name="alert_create_playlist">Завершить создание плейлиста?</string>
+    <string name="alert_data_will_be_lost">Все несохранённые данные будут потеряны</string>
+    <string name="Cancel">Отмена</string>
+    <string name="Complete">Завершить</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
 
 </resources>

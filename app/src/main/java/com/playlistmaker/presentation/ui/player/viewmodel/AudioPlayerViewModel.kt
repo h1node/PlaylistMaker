@@ -8,9 +8,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.playlistmaker.data.db.toEntity
 import com.playlistmaker.domain.models.Music
+import com.playlistmaker.domain.models.Playlist
 import com.playlistmaker.domain.repositories.FavoritesRepository
+import com.playlistmaker.domain.usecase.AddTrackToPlaylistUseCase
+import com.playlistmaker.domain.usecase.PlaylistUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
@@ -20,11 +25,19 @@ import kotlinx.coroutines.launch
 class AudioPlayerViewModel(
     application: Application,
     private val track: Music?,
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    private val playlistUseCase: PlaylistUseCase,
+    private val addTrackUseCase: AddTrackToPlaylistUseCase
 ) : AndroidViewModel(application) {
 
     val currentTrackId: Long?
         get() = track?.trackId
+
+    private val _addResult = MutableLiveData<Boolean>()
+    val addResult: LiveData<Boolean> = _addResult
+
+    private val _playlists = MutableStateFlow<List<Playlist>>(emptyList())
+    val playlists: StateFlow<List<Playlist>> = _playlists
 
     private var mediaPlayer: MediaPlayer? = null
     private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
@@ -38,6 +51,22 @@ class AudioPlayerViewModel(
     init {
         observeFavoriteStateForTrack()
         preparePlayer()
+    }
+
+    fun addTrackToPlaylist(playlistId: Long) {
+        track?.let { music ->
+            viewModelScope.launch {
+                val wasAdded = addTrackUseCase(playlistId, music)
+                _addResult.postValue(wasAdded)
+            }
+        }
+    }
+
+    fun loadPlaylists() {
+        viewModelScope.launch {
+            playlistUseCase.fetchPlaylists()
+                .collect { list -> _playlists.value = list }
+        }
     }
 
     private fun observeFavoriteStateForTrack() {

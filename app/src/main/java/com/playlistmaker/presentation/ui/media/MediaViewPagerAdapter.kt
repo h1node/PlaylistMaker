@@ -19,8 +19,8 @@ class MediaViewPagerAdapter(
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> FavoritesTrackFragment.newInstance()
-            else -> PlayListFragment.newInstance((position + 1).toString())
-
+            1 -> PlayListFragment()
+            else -> throw IllegalStateException("Unexpected position $position")
         }
     }
 }

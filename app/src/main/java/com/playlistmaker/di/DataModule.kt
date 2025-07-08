@@ -14,7 +14,7 @@ val dataModule = module {
             .build()
     }
 
-    single {
-        get<AppDatabase>().musicDao()
-    }
+    single { get<AppDatabase>().musicDao() }
+    single { get<AppDatabase>().playlistDao() }
+    single { get<AppDatabase>().playlistMusicDao() }
 }
