@@ -35,6 +35,7 @@
     <dimen name="fragment_placeholder_116">116dp</dimen>
     <dimen name="fragment_playlist_placeholder_46dp">46dp</dimen>
     <dimen name="margin_32dp">32dp</dimen>
+    <dimen name="radius_4">4dp</dimen>
 </resources>
 
 

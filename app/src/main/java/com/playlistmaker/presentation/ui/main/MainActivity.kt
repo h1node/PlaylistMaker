@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -29,8 +30,11 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNavigationView.visibility =
-                if (destination.id == R.id.audioPlayerFragment) View.GONE else View.VISIBLE
+            val hideOn = setOf(
+                R.id.audioPlayerFragment,
+                R.id.createPlayListFragment
+            )
+            binding.bottomNavigationView.isVisible = destination.id !in hideOn
         }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)

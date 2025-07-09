@@ -15,6 +15,20 @@
         <item name="iconTint">@color/YP_Black</item>
     </style>
 
+    <style name="text_input_layout_style" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="boxStrokeColor">@color/text_input_stroke_color</item>
+        <item name="hintTextColor">@color/text_input_stroke_color</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_4</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_4</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_4</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_4</item>
+        <item name="cursorColor">@color/YP_Blue</item>
+    </style>
+
+
     <style name="playlist_btn">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

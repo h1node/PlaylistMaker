@@ -1,4 +1,4 @@
-package com.playlistmaker.presentation.viewholder
+package com.playlistmaker.presentation.ui.search.viewholder
 
 import android.content.Context
 import android.util.TypedValue

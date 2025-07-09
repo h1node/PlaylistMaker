@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <stroke
-        android:width="2dp"
-        android:color="#AEAFB4" />
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <corners android:radius="4dp" />
-</shape>
+    <item android:drawable="@drawable/edittext_focused" android:state_activated="true" />
+
+    <item android:drawable="@drawable/edittext_default" />
+
+</selector>

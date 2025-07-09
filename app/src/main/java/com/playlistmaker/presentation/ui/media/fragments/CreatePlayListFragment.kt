@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -28,6 +27,7 @@ import java.io.FileOutputStream
 
 
 class CreatePlayListFragment : Fragment() {
+
     private var _binding: FragmentCreatePlayListBinding? = null
     private val binding get() = _binding!!
 
@@ -37,9 +37,7 @@ class CreatePlayListFragment : Fragment() {
     private val pickMediaLauncher = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
-        uri?.let {
-            viewModel.onCoverUriChanged(it)
-        }
+        viewModel.onCoverUriChanged(uri)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,9 +46,7 @@ class CreatePlayListFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCreatePlayListBinding.inflate(inflater, container, false)
         return binding.root
@@ -58,11 +54,19 @@ class CreatePlayListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupToolbar()
         initUi()
         setupBackPressedHandler()
-        val activity = requireActivity() as AppCompatActivity
-        activity.setSupportActionBar(binding.toolbar)
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun setupToolbar() {
+        (requireActivity() as AppCompatActivity).apply {
+            setSupportActionBar(binding.toolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
+        binding.toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     private fun initUi() {
@@ -72,16 +76,20 @@ class CreatePlayListFragment : Fragment() {
                     binding.playlistName.setText(name)
                 }
                 binding.btnCreate.isEnabled = name.isNotBlank()
+                binding.tilPlaylistName.isActivated = name.isNotBlank()
             }
         }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.description.collect { desc ->
-                val text = desc ?: ""
+                val text = desc.orEmpty()
                 if (binding.playlistDescription.text.toString() != text) {
                     binding.playlistDescription.setText(text)
                 }
+                binding.tilPlaylistDescription.isActivated = text.isNotBlank()
             }
         }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.coverUri.collect { uri ->
                 selectedCoverUri = uri
@@ -98,10 +106,14 @@ class CreatePlayListFragment : Fragment() {
 
         binding.playlistName.doOnTextChanged { text, _, _, _ ->
             viewModel.onNameChanged(text.toString())
+            binding.tilPlaylistName.isActivated = !text.isNullOrBlank()
         }
+
         binding.playlistDescription.doOnTextChanged { text, _, _, _ ->
             viewModel.onDescriptionChanged(text?.toString()?.takeIf { it.isNotBlank() })
+            binding.tilPlaylistDescription.isActivated = !text.isNullOrBlank()
         }
+
 
         binding.coverPlaceholder.setOnClickListener {
             pickMediaLauncher.launch(
@@ -109,24 +121,27 @@ class CreatePlayListFragment : Fragment() {
             )
         }
 
-        binding.btnCreate.setOnClickListener {
-            val name = viewModel.name.value
-            val desc = viewModel.description.value
-            val uri = viewModel.coverUri.value
-            val fileName = uri?.let { "${System.currentTimeMillis()}_${name}.jpg" }
-            fileName?.let { copyUriToInternalStorage(uri, it) }
+        binding.btnCreate.setOnClickListener { createPlaylist() }
+    }
 
-            val playlist = Playlist(
-                id = 0L,
-                name = name,
-                description = desc,
-                coverUri = fileName
-            )
-            viewModel.savePlaylist(playlist)
 
-            Toast.makeText(requireContext(), "Плейлист '$name' создан", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
-        }
+    private fun createPlaylist() {
+        val name = viewModel.name.value
+        val desc = viewModel.description.value
+        val uri = viewModel.coverUri.value
+        val fileName = uri?.let { "${System.currentTimeMillis()}_${name}.jpg" }
+        fileName?.let { copyUriToInternalStorage(uri, it) }
+
+        val playlist = Playlist(
+            id = 0L,
+            name = name,
+            description = desc,
+            coverUri = fileName
+        )
+        viewModel.savePlaylist(playlist)
+
+        Toast.makeText(requireContext(), "Плейлист '$name' создан", Toast.LENGTH_SHORT).show()
+        findNavController().popBackStack()
     }
 
     private fun setupBackPressedHandler() {
@@ -157,11 +172,11 @@ class CreatePlayListFragment : Fragment() {
         )
     }
 
-    private fun copyUriToInternalStorage(uri: Uri, fileName: String) {
+    private fun copyUriToInternalStorage(uri: Uri?, fileName: String) {
+        uri ?: return
         try {
             val targetDir = File(requireContext().filesDir, "playlist_covers")
             if (!targetDir.exists()) targetDir.mkdirs()
-
             val outFile = File(targetDir, fileName)
             requireContext().contentResolver.openInputStream(uri)?.use { input ->
                 FileOutputStream(outFile).use { output ->
@@ -170,17 +185,6 @@ class CreatePlayListFragment : Fragment() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                findNavController().popBackStack()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
