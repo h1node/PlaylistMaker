@@ -34,7 +34,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.audioPlayerFragment,
                 R.id.createPlayListFragment
             )
+            val shouldShow = destination.id !in hideOn
             binding.bottomNavigationView.isVisible = destination.id !in hideOn
+            binding.bottomNavSeparator.isVisible = shouldShow
         }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)

@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -124,7 +125,6 @@ class CreatePlayListFragment : Fragment() {
         binding.btnCreate.setOnClickListener { createPlaylist() }
     }
 
-
     private fun createPlaylist() {
         val name = viewModel.name.value
         val desc = viewModel.description.value
@@ -157,7 +157,7 @@ class CreatePlayListFragment : Fragment() {
                         isEnabled = false
                         requireActivity().onBackPressed()
                     } else {
-                        AlertDialog.Builder(requireContext())
+                        val dialog = AlertDialog.Builder(requireContext())
                             .setTitle(getString(R.string.alert_create_playlist))
                             .setMessage(getString(R.string.alert_data_will_be_lost))
                             .setNegativeButton(getString(R.string.Cancel), null)
@@ -166,6 +166,11 @@ class CreatePlayListFragment : Fragment() {
                                 requireActivity().onBackPressed()
                             }
                             .show()
+
+                        val color =
+                            ContextCompat.getColor(requireContext(), R.color.dialog_button_color)
+                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(color)
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(color)
                     }
                 }
             }
