@@ -23,4 +23,10 @@ interface MusicDao {
 
     @Query("SELECT trackId FROM music_table")
     suspend fun getAllFavoriteTrackId(): List<Long>
+
+    @Query("DELETE FROM music_table WHERE trackId = :trackId")
+    suspend fun deleteTrackById(trackId: Long)
+
+    @Query("SELECT * FROM music_table")
+    suspend fun getAllTracks(): List<MusicEntity>
 }

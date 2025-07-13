@@ -16,7 +16,7 @@
         android:fontFamily="@font/ys_display_regular"
         android:padding="16dp"
         android:text="@string/add_to_playlist"
-        android:textColor="@color/colorLightNight"
+        android:textColor="@color/color_Night_Light"
         android:textSize="@dimen/YS_medium_19sp" />
 
     <Button

@@ -97,7 +97,7 @@
                 android:fontFamily="@font/ys_display_medium"
                 android:gravity="center"
                 android:text="@string/you_looking_for"
-                android:textColor="@color/colorLightNight"
+                android:textColor="@color/color_Night_Light"
                 android:textSize="@dimen/YS_medium_19sp" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -150,7 +150,7 @@
             android:layout_marginTop="296dp"
             android:fontFamily="@font/ys_display_medium"
             android:textAlignment="center"
-            android:textColor="@color/colorLightNight"
+            android:textColor="@color/color_Night_Light"
             android:textSize="@dimen/YS_medium_19sp"
             tools:text="" />
 

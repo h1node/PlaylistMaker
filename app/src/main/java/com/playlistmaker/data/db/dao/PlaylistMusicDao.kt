@@ -18,4 +18,17 @@ interface PlaylistMusicDao {
 
     @Query("SELECT COUNT(*) FROM playlist_music_table WHERE playlistId = :playlistId")
     fun countTracksInPlaylist(playlistId: Long): Flow<Int>
+
+    @Query("SELECT * FROM playlist_music_table WHERE playlistId = :playlistId")
+    suspend fun getTracksForPlaylist(playlistId: Long): List<PlaylistMusicEntity>
+
+    @Query("DELETE FROM playlist_music_table WHERE playlistId = :playlistId AND trackId = :trackId")
+    suspend fun deleteTrackFromPlaylist(playlistId: Long, trackId: Long)
+
+    @Query("SELECT * FROM playlist_music_table")
+    suspend fun getAllPlaylistTracks(): List<PlaylistMusicEntity>
+
+    @Query("DELETE FROM playlist_music_table WHERE playlistId = :playlistId")
+    suspend fun deleteAllTracksFromPlaylist(playlistId: Long)
+
 }

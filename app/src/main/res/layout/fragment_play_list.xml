@@ -58,7 +58,7 @@
             android:layout_marginTop="@dimen/margin_16dp"
             android:fontFamily="@font/ys_display_medium"
             android:text="@string/playlist_text"
-            android:textColor="@color/colorLightNight"
+            android:textColor="@color/color_Night_Light"
             android:textSize="@dimen/YS_medium_19sp" />
     </LinearLayout>
 

@@ -19,7 +19,6 @@ class MusicRVAdapter(
             notifyDataSetChanged()
         }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicViewHolder {
         return MusicViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.music_item, parent, false)

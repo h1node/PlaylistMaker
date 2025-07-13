@@ -32,7 +32,7 @@
     <style name="playlist_btn">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="backgroundTint">@color/colorLightNight</item>
+        <item name="backgroundTint">@color/color_Night_Light</item>
         <item name="android:textColor">@color/music_item_color</item>
         <item name="textAllCaps">false</item>
         <item name="fontFamily">@font/ys_display_medium</item>
@@ -43,8 +43,8 @@
         <item name="textAllCaps">false</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="tabTextColor">@color/colorLightNight</item>
-        <item name="tabIndicatorColor">@color/colorLightNight</item>
+        <item name="tabTextColor">@color/color_Night_Light</item>
+        <item name="tabIndicatorColor">@color/color_Night_Light</item>
         <item name="android:textSize">@dimen/textSize_14</item>
     </style>
 
@@ -65,7 +65,7 @@
 
     <style name="refresh_button">
         <item name="cornerRadius">54dp</item>
-        <item name="backgroundTint">@color/colorLightNight</item>
+        <item name="backgroundTint">@color/color_Night_Light</item>
         <item name="fontFamily">@font/ys_display_medium</item>
     </style>
 
@@ -77,7 +77,7 @@
 
     <style name="clear_button">
         <item name="cornerRadius">54dp</item>
-        <item name="backgroundTint">@color/colorLightNight</item>
+        <item name="backgroundTint">@color/color_Night_Light</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 
@@ -98,7 +98,7 @@
     <style name="AudioPlayerText">
         <item name="android:gravity">end</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textColor">@color/colorLightNight</item>
+        <item name="android:textColor">@color/color_Night_Light</item>
         <item name="android:textSize">13sp</item>
         <item name="android:ellipsize">end</item>
         <item name="maxLines">1</item>

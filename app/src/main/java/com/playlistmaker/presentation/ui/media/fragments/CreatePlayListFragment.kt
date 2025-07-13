@@ -27,12 +27,12 @@ import java.io.File
 import java.io.FileOutputStream
 
 
-class CreatePlayListFragment : Fragment() {
+open class CreatePlayListFragment : Fragment() {
 
     private var _binding: FragmentCreatePlayListBinding? = null
-    private val binding get() = _binding!!
+    protected val binding get() = _binding!!
 
-    private val viewModel: CreatePlaylistViewModel by viewModel()
+    protected val viewModel: CreatePlaylistViewModel by viewModel()
     private var selectedCoverUri: Uri? = null
 
     private val pickMediaLauncher = registerForActivityResult(
@@ -177,7 +177,7 @@ class CreatePlayListFragment : Fragment() {
         )
     }
 
-    private fun copyUriToInternalStorage(uri: Uri?, fileName: String) {
+    protected fun copyUriToInternalStorage(uri: Uri?, fileName: String) {
         uri ?: return
         try {
             val targetDir = File(requireContext().filesDir, "playlist_covers")

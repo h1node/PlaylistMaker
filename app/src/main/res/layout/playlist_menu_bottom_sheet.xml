@@ -1,0 +1,99 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menuBottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:paddingBottom="16dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rectangle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_Light_Night"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/ivCover"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/placeholder"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPlaylistName"
+                style="@style/MusicItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Best songs 2021"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvTracksCount"
+                style="@style/MusicItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="98 треков"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/btnShare"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="12dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:paddingVertical="14dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/share"
+        android:textColor="@color/color_Night_Light"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/btnEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawablePadding="12dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:paddingVertical="14dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/edit_information"
+        android:textColor="@color/color_Night_Light"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/btnDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawablePadding="12dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:paddingVertical="14dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/delete_playlist"
+        android:textColor="@color/color_Night_Light"
+        android:textSize="16sp" />
+
+</LinearLayout>
