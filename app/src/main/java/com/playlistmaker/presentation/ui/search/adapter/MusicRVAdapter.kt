@@ -1,4 +1,4 @@
-package com.playlistmaker.presentation.adapter
+package com.playlistmaker.presentation.ui.search.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.playlistmaker.R
 import com.playlistmaker.domain.models.Music
-import com.playlistmaker.presentation.viewholder.MusicViewHolder
+import com.playlistmaker.presentation.ui.search.viewholder.MusicViewHolder
 
 class MusicRVAdapter(
     private val clickListener: (Music) -> Unit

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
 
 
@@ -7,6 +7,8 @@
         <item name="colorPrimary">@color/main_background</item>
 <!--        <item name="colorPrimaryVariant"></item>-->
         <item name="colorOnPrimary">@color/YP_Black</item>
+        <item name="colorControlActivated">@color/YP_Blue</item>
+        <item name="colorOnSurface">@color/YP_Gray</item>
         <!-- Secondary brand color. -->
 <!--        <item name="colorSecondary"></item>-->
 <!--        <item name="colorSecondaryVariant"></item>-->

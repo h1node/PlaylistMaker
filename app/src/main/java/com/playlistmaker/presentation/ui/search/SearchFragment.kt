@@ -20,10 +20,10 @@ import com.playlistmaker.domain.models.Music
 import com.playlistmaker.domain.usecase.ClearSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.GetSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.ManageSearchHistoryUseCase
-import com.playlistmaker.presentation.adapter.MusicRVAdapter
 import com.playlistmaker.presentation.ui.main.MainActivity
+import com.playlistmaker.presentation.ui.search.adapter.MusicRVAdapter
+import com.playlistmaker.presentation.ui.search.viewmodel.SearchState
 import com.playlistmaker.presentation.ui.search.viewmodel.SearchViewModel
-import com.playlistmaker.presentation.ui.viewmodel.SearchState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -34,6 +34,9 @@
     <dimen name="textSize_14">14sp</dimen>
     <dimen name="fragment_placeholder_116">116dp</dimen>
     <dimen name="fragment_playlist_placeholder_46dp">46dp</dimen>
+    <dimen name="margin_32dp">32dp</dimen>
+    <dimen name="radius_4">4dp</dimen>
+    <dimen name="margin_17dp">17dp</dimen>
 </resources>
 
 

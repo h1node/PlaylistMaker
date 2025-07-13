@@ -15,5 +15,7 @@
 
     <!--    text color-->
     <color name="refresh_button_text_color">#1A1B22</color>
+    <color name="placeholder_color">#1A1B22</color>
+    <color name="dialog_button_color">@color/YP_Blue</color>
 
 </resources>

@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.playlistmaker.R
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
-import com.playlistmaker.presentation.ui.viewmodel.SearchState
-import com.playlistmaker.presentation.ui.viewmodel.SingleLiveEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
