@@ -32,7 +32,8 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val hideOn = setOf(
                 R.id.audioPlayerFragment,
-                R.id.createPlayListFragment
+                R.id.createPlayListFragment,
+                R.id.playlistDetailsFragment,
             )
             val shouldShow = destination.id !in hideOn
             binding.bottomNavigationView.isVisible = destination.id !in hideOn

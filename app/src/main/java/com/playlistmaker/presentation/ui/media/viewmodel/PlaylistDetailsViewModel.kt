@@ -35,10 +35,8 @@ class PlaylistDetailsViewModel(
         }
     }
 
-    fun deletePlaylist() {
-        viewModelScope.launch {
-            deletePlaylistUseCase(playlistId)
-        }
+    suspend fun deletePlaylist() {
+        deletePlaylistUseCase(playlistId)
     }
 
     fun refreshPlaylist() {

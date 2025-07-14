@@ -22,6 +22,7 @@ import com.playlistmaker.domain.models.Music
 import com.playlistmaker.domain.models.Playlist
 import com.playlistmaker.presentation.ui.media.fragments.adapter.PlaylistDetailsAdapter
 import com.playlistmaker.presentation.ui.media.viewmodel.PlaylistDetailsViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.io.File
@@ -75,6 +76,7 @@ class PlaylistDetailsFragment : Fragment() {
         (requireActivity() as AppCompatActivity).apply {
             setSupportActionBar(binding.toolbar)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.title = ""
         }
         binding.toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -245,8 +247,10 @@ class PlaylistDetailsFragment : Fragment() {
             .setMessage(getString(R.string.confirm_delete_playlist))
             .setNegativeButton(R.string.no, null)
             .setPositiveButton(R.string.yes) { _, _ ->
-                viewModel.deletePlaylist()
-                findNavController().popBackStack()
+                lifecycleScope.launch {
+                    viewModel.deletePlaylist()
+                    findNavController().popBackStack()
+                }
             }
             .show()
     }
@@ -269,9 +273,11 @@ class PlaylistDetailsFragment : Fragment() {
 
         if (playlist.coverUri != null) {
             val file = File(requireContext().filesDir, playlist.coverUri)
-            binding.coverImage.setImageURI(Uri.fromFile(file))
+            binding.coverPlaceholder.setImageURI(Uri.fromFile(file))
+            binding.coverStub.visibility = View.GONE
         } else {
-            binding.coverImage.setImageResource(R.drawable.placeholder)
+            binding.coverPlaceholder.setImageResource(R.drawable.placeholder)
+            binding.coverStub.visibility = View.VISIBLE
         }
     }
 
