@@ -31,7 +31,7 @@ class PlaylistDetailsViewModel(
         viewModelScope.launch {
             removeTrackFromPlaylist(playlistId, track.trackId)
             _playlist.value = getPlaylistById(playlistId)
-            _tracks.value = getTracksForPlaylist(playlistId)
+            _tracks.value = getTracksForPlaylist(playlistId).reversed()
         }
     }
 
@@ -42,14 +42,14 @@ class PlaylistDetailsViewModel(
     fun refreshPlaylist() {
         viewModelScope.launch {
             _playlist.value = getPlaylistById(playlistId)
-            _tracks.value = getTracksForPlaylist(playlistId)
+            _tracks.value = getTracksForPlaylist(playlistId).reversed()
         }
     }
 
     init {
         viewModelScope.launch {
             val playlist = getPlaylistById(playlistId)
-            val tracks = getTracksForPlaylist(playlistId)
+            val tracks = getTracksForPlaylist(playlistId).reversed()
             _playlist.value = playlist
             _tracks.value = tracks
         }

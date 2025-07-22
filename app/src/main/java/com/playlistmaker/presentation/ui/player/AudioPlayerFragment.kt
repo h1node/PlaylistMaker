@@ -138,7 +138,6 @@ class AudioPlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                overlay.alpha = slideOffset.coerceIn(0f, 1f)
             }
         })
 

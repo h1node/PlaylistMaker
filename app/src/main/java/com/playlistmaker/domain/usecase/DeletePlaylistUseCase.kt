@@ -9,5 +9,4 @@ class DeletePlaylistUseCase(
     suspend operator fun invoke(playlistId: Long) {
         repository.deletePlaylist(playlistId)
     }
-
 }

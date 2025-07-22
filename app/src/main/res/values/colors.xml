@@ -32,5 +32,6 @@
     <color name="placeholder_color">#FFFFFF</color>
     <color name="progress_bar_color">#3772E7</color>
     <color name="dialog_button_color">@color/YP_Black</color>
+    <color name="overlay">#1A1B2280</color>
 
 </resources>

@@ -8,24 +8,27 @@
     tools:context=".presentation.ui.media.fragments.PlaylistDetailsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@color/YP_Gray_Light">
 
         <FrameLayout
             android:id="@+id/coverImage"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="@drawable/rounded_8dp"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/coverPlaceholder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/YP_Gray_Light"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/RoundedImageView8dp" />
 
             <ImageView
                 android:id="@+id/coverStub"
@@ -125,7 +128,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:layout_marginTop="@dimen/margin_24dp"
         app:behavior_hideable="false"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -151,6 +153,13 @@
                 tools:listitem="@layout/music_item" />
         </LinearLayout>
     </FrameLayout>
+
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/menuBottomSheet"

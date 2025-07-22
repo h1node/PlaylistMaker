@@ -63,6 +63,11 @@
         <item name="cornerRadius">8dp</item>
     </style>
 
+    <style name="RoundedImageView8dp">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
     <style name="refresh_button">
         <item name="cornerRadius">54dp</item>
         <item name="backgroundTint">@color/color_Night_Light</item>

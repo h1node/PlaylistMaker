@@ -2,12 +2,16 @@ package com.playlistmaker.presentation.ui.media.fragments
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.view.WindowInsets
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -35,6 +39,8 @@ class PlaylistDetailsFragment : Fragment() {
     private lateinit var tracksAdapter: PlaylistDetailsAdapter
     private lateinit var menuSheetBehavior: BottomSheetBehavior<LinearLayout>
 
+    private var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
+
     private val playlistId: Long by lazy {
         PlaylistDetailsFragmentArgs.fromBundle(requireArguments()).playlistId
     }
@@ -50,9 +56,13 @@ class PlaylistDetailsFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupToolbar()
         setupBottomSheet()
+        binding.menuBottomSheet.post {
+            menuSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
         setupTracksAdapter()
         setupMenuBottomSheet()
         setupShareButton()
@@ -70,6 +80,9 @@ class PlaylistDetailsFragment : Fragment() {
                 updateTrackStats(tracks)
             }
         }
+        if (::menuSheetBehavior.isInitialized) {
+            menuSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     private fun setupToolbar() {
@@ -83,11 +96,32 @@ class PlaylistDetailsFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun setupBottomSheet() {
-        val behavior = BottomSheetBehavior.from(binding.bottomSheet)
-        behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        behavior.peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_sheet_height)
-        behavior.isHideable = false
+        val bottomSheet = binding.bottomSheet
+        val container = binding.container
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+        container.post {
+            globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    val bindingSafe = _binding ?: return
+                    val containerBottom = bindingSafe.container.bottom
+
+                    val windowMetrics = requireActivity().windowManager.currentWindowMetrics
+                    val insets =
+                        windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+                    val screenHeight = windowMetrics.bounds.height() - insets.top - insets.bottom
+                    val marginTopPx = resources.getDimensionPixelSize(R.dimen.margin_24dp)
+                    val peekHeight = screenHeight - containerBottom - marginTopPx
+
+                    bottomSheetBehavior.peekHeight = maxOf(peekHeight, 120)
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    bindingSafe.container.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+            }
+            binding.container.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+        }
     }
 
     private fun setupTracksAdapter() {
@@ -110,17 +144,7 @@ class PlaylistDetailsFragment : Fragment() {
         menuSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         menuSheetBehavior.isHideable = true
 
-        val overlay = View(requireContext()).apply {
-            setBackgroundColor(0x99000000.toInt())
-            visibility = View.GONE
-        }
-        (binding.root as ViewGroup).addView(
-            overlay,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        overlay.bringToFront()
-        binding.menuBottomSheet.bringToFront()
+        val overlay = binding.overlay
 
         menuSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
