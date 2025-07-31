@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentPlayListBinding
+import com.playlistmaker.presentation.ui.media.MediaLibraryDirections
 import com.playlistmaker.presentation.ui.media.fragments.adapter.PlaylistAdapter
 import com.playlistmaker.presentation.ui.media.viewmodel.PlaylistListViewModel
 import kotlinx.coroutines.launch
@@ -49,11 +49,9 @@ class PlayListFragment : Fragment() {
 
     private fun initRecyclerView() {
         adapter = PlaylistAdapter { playlist ->
-            Toast.makeText(
-                requireContext(),
-                "Выбран плейлист: ${playlist.name}",
-                Toast.LENGTH_SHORT
-            ).show()
+            val action =
+                MediaLibraryDirections.actionMediaLibraryToPlaylistDetailsFragment(playlist.id)
+            findNavController().navigate(action)
         }
         binding.rvPlaylists.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)

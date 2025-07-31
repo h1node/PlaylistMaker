@@ -2,10 +2,11 @@
 <resources>
     <!--    icon_colors-->
     <color name="bottomNavigationBackGround">#1A1B22</color>
-    <color name="colorLightNight">#FFFFFF</color>
+    <color name="color_Night_Light">#FFFFFF</color>
     <color name="clear_history_button_color">#1A1B22</color>
     <color name="search_icon">#1A1B22</color>
     <color name="close_icon">#1A1B22</color>
+    <color name="color_Light_Night">#1A1B22</color>
 
     //switch button
     <color name="thumbTint_switch_on_off">#3772E7</color>

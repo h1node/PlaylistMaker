@@ -34,4 +34,16 @@
     <string name="Cancel">Cancel</string>
     <string name="Complete">Complete</string>
     <string name="add_to_playlist">Add to playlist</string>
+    <string name="delete_track">Do you want to delete a track?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="share">Share</string>
+    <string name="edit_information">Edit information</string>
+    <string name="delete_playlist">Delete playlist</string>
+    <string name="not_available">Playlist is not available</string>
+    <string name="no_tracks_to_share">There is no track list in this playlist that can be shared.</string>
+    <string name="share_playlist">Share playlist</string>
+    <string name="confirm_delete_playlist">Do you want to delete a playlist?</string>
+    <string name="edit_playlist">Edit</string>
+    <string name="save">Save</string>
 </resources>

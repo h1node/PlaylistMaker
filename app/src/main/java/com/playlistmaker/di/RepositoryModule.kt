@@ -24,7 +24,8 @@ val repositoryModule = module {
     single<PlaylistRepository> {
         PlaylistRepositoryImpl(
             playlistDao = get(),
-            playlistMusicDao = get()
+            playlistMusicDao = get(),
+            musicDao = get()
         )
     }
 }

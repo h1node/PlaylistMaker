@@ -3,6 +3,7 @@ package com.playlistmaker.di
 import com.playlistmaker.domain.models.Music
 import com.playlistmaker.presentation.ui.media.viewmodel.CreatePlaylistViewModel
 import com.playlistmaker.presentation.ui.media.viewmodel.FavoritesViewModel
+import com.playlistmaker.presentation.ui.media.viewmodel.PlaylistDetailsViewModel
 import com.playlistmaker.presentation.ui.media.viewmodel.PlaylistListViewModel
 import com.playlistmaker.presentation.ui.player.viewmodel.AudioPlayerViewModel
 import com.playlistmaker.presentation.ui.search.viewmodel.SearchViewModel
@@ -24,4 +25,13 @@ val viewModelModule = module {
     viewModel { FavoritesViewModel(get()) }
     viewModel { PlaylistListViewModel(get()) }
     viewModel { CreatePlaylistViewModel(get(), get()) }
+    viewModel { (playlistId: Long) ->
+        PlaylistDetailsViewModel(
+            getPlaylistById = get(),
+            getTracksForPlaylist = get(),
+            removeTrackFromPlaylist = get(),
+            deletePlaylistUseCase = get(),
+            playlistId = playlistId
+        )
+    }
 }

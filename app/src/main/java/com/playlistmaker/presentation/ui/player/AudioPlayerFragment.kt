@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentAudioPlayerBinding
@@ -139,7 +138,6 @@ class AudioPlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                overlay.alpha = slideOffset.coerceIn(0f, 1f)
             }
         })
 
@@ -169,6 +167,11 @@ class AudioPlayerFragment : Fragment() {
             }
         }
 
+        val displayMetrics = resources.displayMetrics
+        val screenHeight = displayMetrics.heightPixels
+        val halfScreen = (screenHeight * 0.5).toInt()
+        bottomSheetBehavior.peekHeight = halfScreen
+
         binding.plusButton.setOnClickListener {
             viewModel.loadPlaylists()
             lifecycleScope.launch {
@@ -176,7 +179,7 @@ class AudioPlayerFragment : Fragment() {
                     sheetAdapter.submitList(list)
                 }
             }
-            bottomSheetBehavior.state = STATE_EXPANDED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         binding.root.findViewById<Button>(R.id.btnNewPlaylistFromSheet)

@@ -14,6 +14,13 @@
         <action
             android:id="@+id/action_mediaLibrary_to_createPlayListFragment"
             app:destination="@id/createPlayListFragment" />
+        <action
+            android:id="@+id/action_mediaLibrary_to_playlistDetailsFragment"
+            app:destination="@id/playlistDetailsFragment">
+            <argument
+                android:name="playlistId"
+                app:argType="long" />
+        </action>
     </fragment>
 
     <!-- 2. Экран списка плейлистов внутри ViewPager -->
@@ -21,7 +28,11 @@
         android:id="@+id/playListFragment"
         android:name="com.playlistmaker.presentation.ui.media.fragments.PlayListFragment"
         android:label="PlayList"
-        tools:layout="@layout/fragment_play_list" />
+        tools:layout="@layout/fragment_play_list">
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+    </fragment>
 
     <!-- 3. Экран создания плейлиста -->
     <fragment
@@ -79,6 +90,40 @@
                 android:name="track"
                 app:argType="com.playlistmaker.domain.models.Music" />
         </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/playlistDetailsFragment"
+        android:name="com.playlistmaker.presentation.ui.media.fragments.PlaylistDetailsFragment"
+        android:label="fragment_playlist_details"
+        tools:layout="@layout/fragment_playlist_details">
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_playlistDetailsFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment">
+            <argument
+                android:name="track"
+                app:argType="com.playlistmaker.domain.models.Music" />
+        </action>
+        <action
+            android:id="@+id/action_playlistDetailsFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment">
+            <argument
+                android:name="playlist"
+                app:argType="com.playlistmaker.domain.models.Playlist" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.playlistmaker.presentation.ui.media.fragments.EditPlaylistFragment"
+        android:label="Редактировать плейлист"
+        tools:layout="@layout/fragment_create_play_list">
+        <argument
+            android:name="playlist"
+            app:argType="com.playlistmaker.domain.models.Playlist" />
     </fragment>
 
 </navigation>

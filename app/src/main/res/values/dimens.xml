@@ -8,6 +8,7 @@
     <dimen name="icon_padding">8dp</dimen>
     <dimen name="margin_start_16">16dp</dimen>
     <dimen name="margin_12">12dp</dimen>
+    <dimen name="bottom_sheet_height">266dp</dimen>
 
 
     //Settings Activity
@@ -37,6 +38,7 @@
     <dimen name="margin_32dp">32dp</dimen>
     <dimen name="radius_4">4dp</dimen>
     <dimen name="margin_17dp">17dp</dimen>
+
 </resources>
 
 
